@@ -2,7 +2,17 @@ package com.billyoyo.cardcrawl.multiplayer.events;
 
 import com.billyoyo.cardcrawl.multiplayer.events.filters.CardGroupFilter;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.cardgroup.*;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.EndTurnEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.StartTurnEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.player.*;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.AddPowerEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.ClearPowersEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.RemovePowerEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.UpdatePowersEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.AddRelicEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.ClearRelicsEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.RemoveRelicEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.UpdateRelicsEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.server.ServerHub;
 
 import java.util.HashMap;
@@ -35,6 +45,8 @@ public class EventManager {
         new LosePotionEventProcessor().registerProcessor(this);
         new UpdateEnergyEventProcessor().registerProcessor(this);
         new UpdateHealthEventProcessor().registerProcessor(this);
+        new UpdateOpponentStatsEventProcessor().registerProcessor(this);
+        new UpdateStatsEventProcessor().registerProcessor(this);
 
         // cardgroup
         new ClearCardsGroupEventProcessor().registerProcessor(this);
@@ -43,12 +55,30 @@ public class EventManager {
         new CardRemoveIdGroupEventProcessor().registerProcessor(this);
         new CardAddGroupEventProcessor().registerProcessor(this);
         new RemoveTopCardGroupEventProcessor().registerProcessor(this);
+        new UpdateCardsGroupEventProcessor().registerProcessor(this);
+        new DiscardAllGroupEventProcessor().registerProcessor(this);
+
+        // relicgroup
+        new AddRelicEventProcessor().registerProcessor(this);
+        new ClearRelicsEventProcessor().registerProcessor(this);
+        new RemoveRelicEventProcessor().registerProcessor(this);
+        new UpdateRelicsEventProcessor().registerProcessor(this);
+
+        // powergroup
+        new AddPowerEventProcessor().registerProcessor(this);
+        new ClearPowersEventProcessor().registerProcessor(this);
+        new RemovePowerEventProcessor().registerProcessor(this);
+        new UpdatePowersEventProcessor().registerProcessor(this);
+
+
+        // lifecycle
+        new EndTurnEventProcessor().registerProcessor(this);
+        new StartTurnEventProcessor().registerProcessor(this);
     }
 
     // register all filters
     private void initializeFilters() {
         new CardGroupFilter().registerFilter(this);
-
     }
 
     public void registerEventProcessor(Class<? extends Event> eventType, EventProcessor eventProcessor) {

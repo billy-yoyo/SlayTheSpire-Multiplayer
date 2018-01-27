@@ -11,16 +11,16 @@ import java.util.List;
  */
 public class ServerHub
 {
-
-    private List<String> randomRelics;
     private EventManager eventManager;
 
-    public ServerHub() {
-        eventManager = new EventManager(this);
+    public ServerHub(EventManager eventManager) {
+        this.eventManager = eventManager;
     }
 
-    public List<String> getRandomRelics() {
-        return randomRelics;
+    public ServerHub() {
+        this(null);
+
+        this.eventManager = new EventManager(this);
     }
 
     public void postEvent(Event event) {

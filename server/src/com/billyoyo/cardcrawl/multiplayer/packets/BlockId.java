@@ -10,7 +10,9 @@ public enum BlockId {
     BOOLEAN(3),
     ABSTRACT_CARD(4),
     BYTE(5),
-    CARD_GROUP_TYPE(6);
+    CARD_GROUP_TYPE(6),
+    ABSTRACT_RELIC(7),
+    ABSTRACT_POWER(8);
 
     private int id;
 

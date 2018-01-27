@@ -3,6 +3,8 @@ package com.billyoyo.cardcrawl.multiplayer.packets;
 import com.billyoyo.cardcrawl.multiplayer.packets.blocks.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
+import com.megacrit.cardcrawl.powers.AbstractPower;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +43,20 @@ public class PacketBuilder {
         return add(new BooleanBlock(block));
     }
 
-    public PacketBuilder add(AbstractCard card) {
-        return add(new AbstractCardBlock(card));
+    public PacketBuilder add(AbstractCard block) {
+        return add(new AbstractCardBlock(block));
     }
 
-    public PacketBuilder add(CardGroup.CardGroupType type) {
-        return add(new CardGroupTypeBlock(type));
+    public PacketBuilder add(CardGroup.CardGroupType block) {
+        return add(new CardGroupTypeBlock(block));
+    }
+
+    public PacketBuilder add(AbstractRelic block) {
+        return add(new AbstractRelicBlock(block));
+    }
+
+    public PacketBuilder add(AbstractPower block) {
+        return add(new AbstractPowerBlock(block));
     }
 
     public Packet build() {

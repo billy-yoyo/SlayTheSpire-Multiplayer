@@ -1,18 +1,25 @@
 package com.billyoyo.cardcrawl.multiplayer.player;
 
-import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.LosePotionEvent;
-import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateEnergyEvent;
-import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateGoldEvent;
-import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateHealthEvent;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.UpdateCardsGroupEvent;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.*;
+import com.billyoyo.cardcrawl.multiplayer.room.GameRoom;
 import com.billyoyo.cardcrawl.multiplayer.server.ClientInfo;
 import com.billyoyo.cardcrawl.multiplayer.server.ServerHub;
+import com.billyoyo.cardcrawl.multiplayer.server.StaticGameHandler;
+import com.megacrit.cardcrawl.actions.GameActionManager;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
+import com.megacrit.cardcrawl.cards.CardQueueItem;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,61 +42,129 @@ public class ClientPlayer extends AbstractPlayer {
         this.exhaustPile = new ClientCardGroup(hub, client, CardGroup.CardGroupType.EXHAUST_PILE);
         this.limbo = new ClientCardGroup(hub, client, CardGroup.CardGroupType.UNSPECIFIED);
 
-        // this.initializeStarterDeck();
+        this.relics = new ClientRelicArrayList(hub, client);
+        this.powers = new ClientPowersArrayList(hub, client);
+    }
+
+    public ClientPlayerSnapshot getSnapshot() {
+        return new ClientPlayerSnapshot(this);
+    }
+
+    public void sessionSetDeck(List<AbstractCardDTO> dtos) {
+        List<AbstractCard> cards = new ArrayList<>();
+
+        for (AbstractCardDTO dto : dtos) {
+            cards.add(dto.create());
+        }
+
+        this.masterDeck.group.addAll(cards);
+        hub.postEvent(new UpdateCardsGroupEvent(client.getId(), this.masterDeck.type,
+                this.masterDeck.group));
+
+        this.drawPile.group.addAll(cards);
+        hub.postEvent(new UpdateCardsGroupEvent(client.getId(), this.drawPile.type,
+                this.drawPile.group));
+    }
+
+    public void sessionSetRelics(List<AbstractRelicDTO> dtos) {
+        List<AbstractRelic> relics = new ArrayList<>();
+
+        for (AbstractRelicDTO dto : dtos) {
+            relics.add(dto.create());
+        }
+
+        this.relics.addAll(relics);
+    }
+
+    public void sessionPlayCard(AbstractCard card, ClientMonster opponent) {
+        StaticGameHandler.exhaustActions();
+
+        if (card.target != AbstractCard.CardTarget.ENEMY && card.target != AbstractCard.CardTarget.SELF_AND_ENEMY) {
+            AbstractDungeon.actionManager.cardQueue.add(new CardQueueItem(card, null));
+        } else {
+            AbstractDungeon.actionManager.cardQueue.add(new CardQueueItem(card, opponent));
+        }
+
+        StaticGameHandler.exhaustActions();
+    }
+
+    public void sessionStartGame(GameRoom room) {
+        for (AbstractRelic relic : relics) {
+            relic.onEnterRoom(room);
+        }
+        this.preBattlePrep();
+
+        StaticGameHandler.exhaustActions();
+
+        hub.postEvent(new UpdateStatsEvent(client.getId(), getSnapshot()));
+    }
+
+    public void sessionEndTurn() {
+        AbstractDungeon.actionManager.endTurn();
+
+        // make sure the action manager is empty, just in case
+        StaticGameHandler.exhaustActions();
+    }
+
+    public void sessionStartTurn(boolean firstTurn) {
+        if (!firstTurn) {
+            AbstractDungeon.actionManager.endTurn();
+            StaticGameHandler.exhaustTurn();
+        }
+
+        StaticGameHandler.exhaustActions();
     }
 
     @Override
     protected void initializeStarterRelics(PlayerClass chosenClass) {
-        int index = 0;
-        List<String> relics = hub.getRandomRelics();
+        // do nothing
+    }
 
-        for (String relic : hub.getRandomRelics()) {
-            RelicLibrary.getRelic(relic).makeCopy().instantObtain(this, index, false);
-        }
-
-        AbstractDungeon.relicsToRemoveOnStart.addAll(relics);
+    @Override
+    protected void initializeStarterDeck() {
+        // do nothing
     }
 
     @Override
     public void loseGold(int goldAmount) {
         super.loseGold(goldAmount);
 
-        hub.postEvent(new UpdateGoldEvent(client.getId(), gold));
+        // hub.postEvent(new UpdateGoldEvent(client.getId(), gold));
     }
 
     @Override
     public void gainGold(int amount) {
         super.gainGold(amount);
 
-        hub.postEvent(new UpdateGoldEvent(client.getId(), gold));
+        // hub.postEvent(new UpdateGoldEvent(client.getId(), gold));
     }
 
     @Override
     public void damage(DamageInfo info) {
         super.damage(info);
 
-        hub.postEvent(new UpdateHealthEvent(client.getId(), currentHealth, isDead, isBloodied));
+        // hub.postEvent(new UpdateHealthEvent(client.getId(), currentHealth, isDead, isBloodied));
     }
 
     @Override
     public void heal(int healAmount) {
         super.heal(healAmount);
 
-        hub.postEvent(new UpdateHealthEvent(client.getId(), currentHealth, isDead, isBloodied));
+        // hub.postEvent(new UpdateHealthEvent(client.getId(), currentHealth, isDead, isBloodied));
     }
 
     @Override
     public void gainEnergy(int e) {
         super.gainEnergy(e);
 
-        hub.postEvent(new UpdateEnergyEvent(client.getId(), EnergyPanel.getCurrentEnergy()));
+        // hub.postEvent(new UpdateEnergyEvent(client.getId(), EnergyPanel.getCurrentEnergy()));
     }
 
     @Override
     public void loseEnergy(int e) {
         super.loseEnergy(e);
 
-        hub.postEvent(new UpdateEnergyEvent(client.getId(), EnergyPanel.getCurrentEnergy()));
+        // hub.postEvent(new UpdateEnergyEvent(client.getId(), EnergyPanel.getCurrentEnergy()));
     }
 
     @Override
@@ -97,7 +172,7 @@ public class ClientPlayer extends AbstractPlayer {
         boolean result = super.losePotion(id);
 
         if (result) {
-            hub.postEvent(new LosePotionEvent(client.getId(), id));
+            // hub.postEvent(new LosePotionEvent(client.getId(), id));
         }
 
         return result;

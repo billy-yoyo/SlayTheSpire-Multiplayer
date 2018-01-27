@@ -2,6 +2,7 @@ package com.billyoyo.cardcrawl.multiplayer.packets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -28,9 +29,7 @@ public class Packet {
         this.blocks = blocks;
     }
 
-    public byte[] getBytes() throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-
+    public void write(OutputStream output) throws IOException {
         if (eventId >= 256 || eventId < 0) {
             throw new IOException("Invalid event id, must be between 0 and 255 inclusive, " + eventId + " was given");
         }
@@ -51,6 +50,12 @@ public class Packet {
             output.write(getBytesForNumber(data.length));
             output.write(data);
         }
+    }
+
+    public byte[] getBytes() throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        write(output);
 
         return output.toByteArray();
     }
