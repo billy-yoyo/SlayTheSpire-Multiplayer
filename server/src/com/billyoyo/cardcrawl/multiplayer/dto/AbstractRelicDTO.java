@@ -1,5 +1,6 @@
 package com.billyoyo.cardcrawl.multiplayer.dto;
 
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
@@ -28,7 +29,7 @@ public class AbstractRelicDTO implements DTO<AbstractRelic> {
     }
 
     @Override
-    public AbstractRelic create() {
+    public AbstractRelic create(CreateData data) {
         AbstractRelic relic = RelicLibrary.getRelic(id);
         if (relic != null) {
             relic = relic.makeCopy();

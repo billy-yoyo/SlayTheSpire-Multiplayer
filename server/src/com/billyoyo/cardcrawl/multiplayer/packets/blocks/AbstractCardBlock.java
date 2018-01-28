@@ -1,5 +1,6 @@
 package com.billyoyo.cardcrawl.multiplayer.packets.blocks;
 
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
 import com.billyoyo.cardcrawl.multiplayer.packets.BlockId;
 import com.billyoyo.cardcrawl.multiplayer.packets.PacketBlock;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -11,9 +12,9 @@ import java.io.IOException;
  */
 public class AbstractCardBlock extends PacketBlock {
 
-    private AbstractCard card;
+    private AbstractCardDTO card;
 
-    public AbstractCardBlock(AbstractCard card) {
+    public AbstractCardBlock(AbstractCardDTO card) {
         super(BlockId.ABSTRACT_CARD);
 
         this.card = card;

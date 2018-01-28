@@ -1,6 +1,7 @@
 package com.billyoyo.cardcrawl.multiplayer.dto;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 
 /**
@@ -42,7 +43,7 @@ public class AbstractCardDTO implements DTO<AbstractCard> {
     }
 
     @Override
-    public AbstractCard create() {
+    public AbstractCard create(CreateData data) {
         AbstractCard card = CardLibrary.getCard(id);
         if (card != null) {
             card = card.makeCopy();
