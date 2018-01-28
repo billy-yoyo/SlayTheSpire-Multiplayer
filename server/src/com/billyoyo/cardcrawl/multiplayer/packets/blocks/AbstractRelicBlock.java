@@ -2,15 +2,18 @@ package com.billyoyo.cardcrawl.multiplayer.packets.blocks;
 
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
 import com.billyoyo.cardcrawl.multiplayer.packets.BlockId;
-import com.billyoyo.cardcrawl.multiplayer.packets.PacketBlock;
+import com.billyoyo.cardcrawl.multiplayer.packets.AbstractPacketBlock;
+import com.billyoyo.cardcrawl.multiplayer.util.IOHelper;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by william on 27/01/2018.
  */
-public class AbstractRelicBlock extends PacketBlock {
+public class AbstractRelicBlock extends AbstractPacketBlock {
 
     private final AbstractRelicDTO relic;
 
@@ -20,8 +23,21 @@ public class AbstractRelicBlock extends PacketBlock {
         this.relic = relic;
     }
 
+    public AbstractRelicBlock(AbstractRelic relic) {
+        this(new AbstractRelicDTO(relic));
+    }
+
+    public AbstractRelicDTO getRelic() {
+        return relic;
+    }
+
     @Override
     public byte[] getBytes() throws IOException {
-        return new byte[0];
+        List<byte[]> dataList = new ArrayList<>();
+
+        dataList.add(IOHelper.bytesForString(relic.getId()));
+        dataList.add(IOHelper.bytesForNumber(relic.getCounter()));
+
+        return IOHelper.joinBytes(dataList);
     }
 }

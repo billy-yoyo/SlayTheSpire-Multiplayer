@@ -6,11 +6,11 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.EndTurnEve
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.StartTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateOpponentStatsEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateStatsEvent;
-import com.billyoyo.cardcrawl.multiplayer.player.ClientMonster;
-import com.billyoyo.cardcrawl.multiplayer.player.ClientMonsterSnapshot;
-import com.billyoyo.cardcrawl.multiplayer.player.ClientPlayer;
-import com.billyoyo.cardcrawl.multiplayer.player.ClientPlayerSnapshot;
-import com.billyoyo.cardcrawl.multiplayer.room.GameRoom;
+import com.billyoyo.cardcrawl.multiplayer.server.player.ClientMonster;
+import com.billyoyo.cardcrawl.multiplayer.server.player.ClientMonsterSnapshot;
+import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayer;
+import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayerSnapshot;
+import com.billyoyo.cardcrawl.multiplayer.server.room.GameRoom;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.characters.Ironclad;
 import com.megacrit.cardcrawl.helpers.CardLibrary;

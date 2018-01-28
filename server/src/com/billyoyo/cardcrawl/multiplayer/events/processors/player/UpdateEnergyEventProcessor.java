@@ -1,6 +1,8 @@
 package com.billyoyo.cardcrawl.multiplayer.events.processors.player;
 
+import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.EventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateEnergyEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 
@@ -9,13 +11,18 @@ import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
  */
 public class UpdateEnergyEventProcessor extends EventProcessor<UpdateEnergyEvent> {
     @Override
-    public Class<UpdateEnergyEvent> getEventClass() {
-        return UpdateEnergyEvent.class;
+    public EventId getEventId() {
+        return EventId.UPDATE_ENERGY;
     }
 
     @Override
     public Packet processEvent(UpdateEnergyEvent event) {
         return createPacketBuilder(event)
                 .add(event.getEnergy()).build();
+    }
+
+    @Override
+    public UpdateEnergyEvent processPacket(CreateData data, Packet packet) {
+        return new UpdateEnergyEvent(data.getClientId(), packet.getInt(0));
     }
 }

@@ -5,10 +5,10 @@ package com.billyoyo.cardcrawl.multiplayer.events;
  */
 public abstract class EventFilter<T extends Event> {
 
-    public abstract Class<T> getEventClass();
+    public abstract int getEventId();
     public abstract Event filter(T event);
 
     public void registerFilter(EventManager manager) {
-        manager.registerFilter(getEventClass(), this);
+        manager.registerFilter(getEventId(), this);
     }
 }

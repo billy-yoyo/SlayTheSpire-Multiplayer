@@ -15,19 +15,27 @@ import java.util.List;
 public class PacketBuilder {
 
     private int eventId = -1;
-    private List<PacketBlock> blocks = new ArrayList<>();
+    private List<AbstractPacketBlock> blocks = new ArrayList<>();
 
     public PacketBuilder setEventId(int eventId) {
         this.eventId = eventId;
         return this;
     }
 
-    public PacketBuilder add(PacketBlock block) {
+    public PacketBuilder add(AbstractPacketBlock block) {
         blocks.add(block);
         return this;
     }
 
+    public PacketBuilder addNull() {
+        add(new NullBlock());
+        return this;
+    }
+
     public PacketBuilder add(String block) {
+        if (block == null) {
+            return addNull();
+        }
         return add(new StringBlock(block));
     }
 
@@ -40,26 +48,42 @@ public class PacketBuilder {
     }
 
     public PacketBuilder add(boolean block) {
-        return add(new BooleanBlock(block));
+        if (block) {
+            return add(new TrueBlock());
+        } else {
+            return add(new FalseBlock());
+        }
     }
 
     public PacketBuilder add(AbstractCard block) {
+        if (block == null) {
+            return addNull();
+        }
         return add(new AbstractCardBlock(block));
     }
 
     public PacketBuilder add(CardGroup.CardGroupType block) {
+        if (block == null) {
+            return addNull();
+        }
         return add(new CardGroupTypeBlock(block));
     }
 
     public PacketBuilder add(AbstractRelic block) {
+        if (block == null) {
+            return addNull();
+        }
         return add(new AbstractRelicBlock(block));
     }
 
     public PacketBuilder add(AbstractPower block) {
+        if (block == null) {
+            return addNull();
+        }
         return add(new AbstractPowerBlock(block));
     }
 
     public Packet build() {
-        return new Packet(eventId, (PacketBlock[]) blocks.toArray());
+        return new Packet(eventId, blocks);
     }
 }

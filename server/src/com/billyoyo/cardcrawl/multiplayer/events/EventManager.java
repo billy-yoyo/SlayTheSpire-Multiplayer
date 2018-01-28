@@ -1,9 +1,10 @@
 package com.billyoyo.cardcrawl.multiplayer.events;
 
+import com.billyoyo.cardcrawl.multiplayer.base.Hub;
+import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.filters.CardGroupFilter;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.cardgroup.*;
-import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.EndTurnEventProcessor;
-import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.StartTurnEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.*;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.player.*;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.AddPowerEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup.ClearPowersEventProcessor;
@@ -13,24 +14,32 @@ import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.AddRelicE
 import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.ClearRelicsEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.RemoveRelicEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.UpdateRelicsEventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 import com.billyoyo.cardcrawl.multiplayer.server.ServerHub;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by william on 26/01/2018.
  */
 public class EventManager {
 
-    private Map<Class<? extends Event>, EventProcessor> processorMap;
-    private Map<Class<? extends Event>, EventFilter> filterMap;
-    private ServerHub hub;
+    private static final Logger log = Logger.getLogger(EventManager.class.getName());
 
-    public EventManager(ServerHub hub) {
+    private Map<Integer, EventProcessor> processorMap;
+    private Map<Integer, EventFilter> filterMap;
+    private List<EventListener> listeners;
+    private Hub hub;
+
+    public EventManager(Hub hub) {
         this.hub = hub;
         this.processorMap = new HashMap<>();
         this.filterMap = new HashMap<>();
+        this.listeners = new ArrayList<>();
 
         initializeProcessors();
         initializeFilters();
@@ -41,7 +50,6 @@ public class EventManager {
         // player
         new UpdateGoldEventProcessor().registerProcessor(this);
         new GainPotionEventProcessor().registerProcessor(this);
-        new GameFinishedEventProcessor().registerProcessor(this);
         new LosePotionEventProcessor().registerProcessor(this);
         new UpdateEnergyEventProcessor().registerProcessor(this);
         new UpdateHealthEventProcessor().registerProcessor(this);
@@ -74,6 +82,9 @@ public class EventManager {
         // lifecycle
         new EndTurnEventProcessor().registerProcessor(this);
         new StartTurnEventProcessor().registerProcessor(this);
+        new ContinueTurnEventProcessor().registerProcessor(this);
+        new GameFinishedEventProcessor().registerProcessor(this);
+        new PlayCardEventProcessor().registerProcessor(this);
     }
 
     // register all filters
@@ -81,19 +92,21 @@ public class EventManager {
         new CardGroupFilter().registerFilter(this);
     }
 
-    public void registerEventProcessor(Class<? extends Event> eventType, EventProcessor eventProcessor) {
-        processorMap.put(eventType, eventProcessor);
+    public void registerEventProcessor(int eventId, EventProcessor eventProcessor) {
+        processorMap.put(eventId, eventProcessor);
     }
 
-    public void registerFilter(Class<? extends Event> eventType, EventFilter eventFilter) {
-        filterMap.put(eventType, eventFilter);
+    public void registerFilter(int eventId, EventFilter eventFilter) {
+        filterMap.put(eventId, eventFilter);
+    }
+
+    public void registerListener(EventListener listener) {
+        listeners.add(listener);
     }
 
     private Event filterEvent(Event event) {
-        Class<? extends Event> eventClass = event.getClass();
-
-        if (filterMap.containsKey(eventClass)) {
-            event = filterMap.get(eventClass).filter(event);
+        if (filterMap.containsKey(event.getEventId())) {
+            event = filterMap.get(event.getEventId()).filter(event);
         }
 
         return event;
@@ -103,10 +116,31 @@ public class EventManager {
         try {
             event = filterEvent(event);
             if (event != null) {
-                processorMap.get(event.getClass()).sendPacket(hub, event);
+                processorMap.get(event.getEventId()).sendPacket(hub, event);
             }
         } catch (Exception e) {
             // fail event
+            log.warning("failed to post event with id " + event.getEventId());
+            throw new EventException("failed to post event with id " + event.getEventId());
+        }
+    }
+
+    public void notifyListeners(Event event) {
+        for (EventListener listener : listeners) {
+            listener.notify(event);
+        }
+    }
+
+    public void receive(CreateData data, Packet packet) {
+        try {
+            EventProcessor processor = processorMap.get(packet.getEventId());
+            Event event = processor.processPacket(data, packet);
+
+            notifyListeners(event);
+        } catch (Exception e) {
+            // failed to receive event
+            log.warning("failed to receive event with id " + packet.getEventId());
+            throw new EventException("failed to receive event with id " + packet.getEventId());
         }
     }
 }

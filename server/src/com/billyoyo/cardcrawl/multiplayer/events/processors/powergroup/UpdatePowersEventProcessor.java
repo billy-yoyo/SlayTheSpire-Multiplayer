@@ -1,18 +1,23 @@
 package com.billyoyo.cardcrawl.multiplayer.events.processors.powergroup;
 
+import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.EventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.powergroup.UpdatePowersEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 import com.billyoyo.cardcrawl.multiplayer.packets.PacketBuilder;
 import com.megacrit.cardcrawl.powers.AbstractPower;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by william on 27/01/2018.
  */
 public class UpdatePowersEventProcessor extends EventProcessor<UpdatePowersEvent> {
     @Override
-    public Class<UpdatePowersEvent> getEventClass() {
-        return UpdatePowersEvent.class;
+    public EventId getEventId() {
+        return EventId.UPDATE_POWERS;
     }
 
     @Override
@@ -24,5 +29,17 @@ public class UpdatePowersEventProcessor extends EventProcessor<UpdatePowersEvent
         }
 
         return builder.build();
+    }
+
+    @Override
+    public UpdatePowersEvent processPacket(CreateData data, Packet packet) {
+        int amountOfPowers = packet.getAmountOfBlocks();
+        List<AbstractPower> powers = new ArrayList<>(amountOfPowers);
+
+        for (int i = 0; i < amountOfPowers; i++) {
+            powers.add(packet.getPower(i).create(data));
+        }
+
+        return new UpdatePowersEvent(data.getClientId(), powers);
     }
 }

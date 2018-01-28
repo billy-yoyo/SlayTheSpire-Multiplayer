@@ -7,12 +7,14 @@ public enum BlockId {
 
     STRING(1),
     INTEGER(2),
-    BOOLEAN(3),
-    ABSTRACT_CARD(4),
-    BYTE(5),
-    CARD_GROUP_TYPE(6),
-    ABSTRACT_RELIC(7),
-    ABSTRACT_POWER(8);
+    TRUE(3),
+    FALSE(4),
+    ABSTRACT_CARD(5),
+    BYTE(6),
+    CARD_GROUP_TYPE(7),
+    ABSTRACT_RELIC(8),
+    ABSTRACT_POWER(9),
+    NULL(10);
 
     private int id;
 

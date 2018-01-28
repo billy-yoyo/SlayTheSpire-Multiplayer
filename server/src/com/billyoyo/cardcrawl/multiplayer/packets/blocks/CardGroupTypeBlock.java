@@ -1,7 +1,8 @@
 package com.billyoyo.cardcrawl.multiplayer.packets.blocks;
 
 import com.billyoyo.cardcrawl.multiplayer.packets.BlockId;
-import com.billyoyo.cardcrawl.multiplayer.packets.PacketBlock;
+import com.billyoyo.cardcrawl.multiplayer.packets.AbstractPacketBlock;
+import com.billyoyo.cardcrawl.multiplayer.util.IOHelper;
 import com.megacrit.cardcrawl.cards.CardGroup;
 
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by william on 26/01/2018.
  */
-public class CardGroupTypeBlock extends PacketBlock {
+public class CardGroupTypeBlock extends AbstractPacketBlock {
 
     private CardGroup.CardGroupType type;
 
@@ -18,8 +19,12 @@ public class CardGroupTypeBlock extends PacketBlock {
         this.type = type;
     }
 
+    public CardGroup.CardGroupType getCardType() {
+        return type;
+    }
+
     @Override
     public byte[] getBytes() throws IOException {
-        return new byte[0];
+        return IOHelper.bytesForSingleByteInt(type.ordinal());
     }
 }

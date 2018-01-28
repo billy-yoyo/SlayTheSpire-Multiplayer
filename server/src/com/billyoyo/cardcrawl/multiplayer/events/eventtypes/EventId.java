@@ -41,7 +41,9 @@ public enum EventId {
 
     // lifecycle
     START_TURN(25),
-    END_TURN(26);
+    END_TURN(26),
+    CONTINUE_TURN(27),
+    PLAY_CARD(28);
 
     private int id;
 

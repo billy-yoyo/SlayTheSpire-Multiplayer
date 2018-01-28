@@ -9,6 +9,7 @@ public class CreateData {
 
     private AbstractCreature owner;
     private AbstractCreature opponent;
+    private String clientId;
 
     public CreateData() {
     }
@@ -17,9 +18,24 @@ public class CreateData {
         this.owner = owner;
     }
 
+    public CreateData(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public CreateData(AbstractCreature owner, String clientId) {
+        this.owner = owner;
+        this.clientId = clientId;
+    }
+
     public CreateData(AbstractCreature owner, AbstractCreature opponent) {
         this.owner = owner;
         this.opponent = opponent;
+    }
+
+    public CreateData(AbstractCreature owner, AbstractCreature opponent, String clientId) {
+        this.owner = owner;
+        this.opponent = opponent;
+        this.clientId = clientId;
     }
 
     public void setOwner(AbstractCreature owner) {
@@ -36,5 +52,13 @@ public class CreateData {
 
     public AbstractCreature getOpponent() {
         return this.opponent;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientId() {
+        return clientId;
     }
 }

@@ -1,6 +1,8 @@
 package com.billyoyo.cardcrawl.multiplayer.events.processors.cardgroup;
 
+import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.EventProcessor;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.ClearCardsGroupEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 
@@ -9,13 +11,18 @@ import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
  */
 public class ClearCardsGroupEventProcessor extends EventProcessor<ClearCardsGroupEvent> {
     @Override
-    public Class<ClearCardsGroupEvent> getEventClass() {
-        return ClearCardsGroupEvent.class;
+    public EventId getEventId() {
+        return EventId.CLEAR_CARDS_GROUP;
     }
 
     @Override
     public Packet processEvent(ClearCardsGroupEvent event) {
         return createPacketBuilder(event)
                 .add(event.getCardGroupType()).build();
+    }
+
+    @Override
+    public ClearCardsGroupEvent processPacket(CreateData data, Packet packet) {
+        return new ClearCardsGroupEvent(data.getClientId(), packet.getCardType(0));
     }
 }

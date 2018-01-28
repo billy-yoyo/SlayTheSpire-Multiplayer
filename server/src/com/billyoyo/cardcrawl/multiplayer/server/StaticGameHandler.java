@@ -1,7 +1,7 @@
 package com.billyoyo.cardcrawl.multiplayer.server;
 
-import com.billyoyo.cardcrawl.multiplayer.player.ClientPlayer;
-import com.billyoyo.cardcrawl.multiplayer.room.GameRoom;
+import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayer;
+import com.billyoyo.cardcrawl.multiplayer.server.room.GameRoom;
 import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.map.MapRoomNode;

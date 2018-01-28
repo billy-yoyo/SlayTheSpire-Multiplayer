@@ -3,6 +3,7 @@ package com.billyoyo.cardcrawl.multiplayer.events.filters;
 import com.billyoyo.cardcrawl.multiplayer.events.Event;
 import com.billyoyo.cardcrawl.multiplayer.events.EventFilter;
 import com.billyoyo.cardcrawl.multiplayer.events.EventManager;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.*;
 import com.megacrit.cardcrawl.cards.CardGroup;
 
@@ -11,19 +12,20 @@ import com.megacrit.cardcrawl.cards.CardGroup;
  */
 public class CardGroupFilter extends EventFilter<BaseCardGroupEvent> {
 
-    private static final Class<? extends Event>[] FILTERED_CLASSES = new Class[] {
-            CardAddGroupEvent.class,
-            CardApplyPowersGroupEvent.class,
-            CardRemoveGroupEvent.class,
-            CardRemoveIdGroupEvent.class,
-            CardRemoveGroupEvent.class,
-            ClearCardsGroupEvent.class,
-            RemoveTopCardGroupEvent.class
+    private static final int[] FILTERED_CLASSES = new int[] {
+            EventId.CARD_ADD_GROUP.getId(),
+            EventId.CARD_APPLY_POWERS_GROUP.getId(),
+            EventId.CARD_REMOVE_GROUP.getId(),
+            EventId.CARD_REMOVE_ID_GROUP.getId(),
+            EventId.CLEAR_CARDS_GROUP.getId(),
+            EventId.REMOVE_TOP_CARD_GROUP.getId(),
+            EventId.UPDATE_CARDS_GROUP.getId(),
+            EventId.DISCARD_ALL_GROUP.getId()
     };
 
     @Override
-    public Class<BaseCardGroupEvent> getEventClass() {
-        return BaseCardGroupEvent.class;
+    public int getEventId() {
+        return -1;
     }
 
     @Override
@@ -37,8 +39,8 @@ public class CardGroupFilter extends EventFilter<BaseCardGroupEvent> {
 
     @Override
     public void registerFilter(EventManager manager) {
-        for (Class<? extends Event> clazz : FILTERED_CLASSES) {
-            manager.registerFilter(clazz, this);
+        for (int eventId : FILTERED_CLASSES) {
+            manager.registerFilter(eventId, this);
         }
     }
 }

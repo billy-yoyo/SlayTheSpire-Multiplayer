@@ -9,18 +9,24 @@ import com.megacrit.cardcrawl.relics.AbstractRelic;
  */
 public class AbstractRelicDTO implements DTO<AbstractRelic> {
 
-    private String id;
+    private final String id;
+    private final int counter;
 
-    public AbstractRelicDTO(String id) {
+    public AbstractRelicDTO(String id, int counter) {
         this.id = id;
+        this.counter = counter;
     }
 
     public AbstractRelicDTO(AbstractRelic relic) {
-        this(relic.relicId);
+        this(relic.relicId, relic.counter);
     }
 
     public String getId() {
         return id;
+    }
+
+    public int getCounter() {
+        return counter;
     }
 
     @Override
@@ -33,6 +39,7 @@ public class AbstractRelicDTO implements DTO<AbstractRelic> {
         AbstractRelic relic = RelicLibrary.getRelic(id);
         if (relic != null) {
             relic = relic.makeCopy();
+            relic.counter = counter;
         }
         return relic;
     }

@@ -1,32 +1,109 @@
 package com.billyoyo.cardcrawl.multiplayer.packets;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractPowerDTO;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
+import com.billyoyo.cardcrawl.multiplayer.packets.blocks.*;
+import com.billyoyo.cardcrawl.multiplayer.util.IOHelper;
+import com.megacrit.cardcrawl.cards.CardGroup;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by william on 26/01/2018.
  *
- * Packet structure,
- *
- * Byte 1: event id
- * Byte 2: number of blocks
- *
  */
 public class Packet {
 
-    private static byte[] getBytesForNumber(int number) {
-        return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(number).array();
+    public static Packet read(InputStream input) throws IOException {
+        int eventId = input.read();
+
+        int amountOfBlocks = input.read();
+        List<AbstractPacketBlock> blocks = new ArrayList<>(amountOfBlocks);
+
+        for (int i = 0; i < amountOfBlocks; i++) {
+            int blockId = input.read();
+            blocks.add(PacketBlockReader.createBlock(blockId, input));
+        }
+
+        return new Packet(eventId, blocks);
     }
 
     private final int eventId;
-    private final PacketBlock[] blocks;
+    private final List<AbstractPacketBlock> blocks;
 
-    public Packet(int eventId, PacketBlock[] blocks) {
+    public Packet(int eventId, List<AbstractPacketBlock> blocks) {
         this.eventId = eventId;
         this.blocks = blocks;
+    }
+
+    public int getEventId() {
+        return eventId;
+    }
+
+    public List<AbstractPacketBlock> getBlocks() {
+        return blocks;
+    }
+
+    public int getAmountOfBlocks() {
+        return blocks.size();
+    }
+
+    public <T extends AbstractPacketBlock> T getBlock(int index) {
+        AbstractPacketBlock block = blocks.get(index);
+        if (block instanceof NullBlock) {
+            return null;
+        }
+
+        return (T) blocks.get(index);
+    }
+
+    public int getInt(int index) {
+        IntegerBlock block = getBlock(index);
+        return block.getValue();
+    }
+
+    public int getByte(int index) {
+        ByteBlock block = getBlock(index);
+        return block.getValue();
+    }
+
+    public AbstractCardDTO getCard(int index) {
+        AbstractCardBlock block = getBlock(index);
+        return block == null ? null : block.getCard();
+    }
+
+    public AbstractPowerDTO getPower(int index) {
+        AbstractPowerBlock block = getBlock(index);
+        return block == null ? null : block.getPower();
+    }
+
+    public AbstractRelicDTO getRelic(int index) {
+        AbstractRelicBlock block = getBlock(index);
+        return block == null ? null : block.getRelic();
+    }
+
+    public CardGroup.CardGroupType getCardType(int index) {
+        CardGroupTypeBlock block = getBlock(index);
+        return block == null ? null : block.getCardType();
+    }
+
+    public boolean getBoolean(int index) {
+        AbstractPacketBlock block = blocks.get(index);
+        if (block instanceof FalseBlock) {
+            return false;
+        } else if (block instanceof TrueBlock) {
+            return true;
+        } else {
+            throw new InvalidBlockTypeException("block at index " + index + " is not a boolean");
+        }
+    }
+
+    public String getString(int index) {
+        StringBlock block = getBlock(index);
+        return block == null ? null : block.getString();
     }
 
     public void write(OutputStream output) throws IOException {
@@ -34,20 +111,20 @@ public class Packet {
             throw new IOException("Invalid event id, must be between 0 and 255 inclusive, " + eventId + " was given");
         }
 
-        if (blocks.length >= 256) {
-            throw new IOException("Too many blocks in a single packet, must be between 0 and 255 inclusive, " + blocks.length + " were given");
+        if (blocks.size() >= 256) {
+            throw new IOException("Too many blocks in a single packet, must be between 0 and 255 inclusive, " + blocks.size() + " were given");
         }
 
         // for now there are less than 256 events so we can assume 1 byte
         output.write(eventId);
 
-        output.write(blocks.length);
+        output.write(blocks.size());
 
-        for (PacketBlock block : blocks) {
+        for (AbstractPacketBlock block : blocks) {
             output.write(block.getBlockId());
 
             byte[] data = block.getBytes();
-            output.write(getBytesForNumber(data.length));
+            output.write(IOHelper.bytesForNumber(data.length));
             output.write(data);
         }
     }
