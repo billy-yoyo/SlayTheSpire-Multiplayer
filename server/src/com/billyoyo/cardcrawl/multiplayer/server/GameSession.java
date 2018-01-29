@@ -56,6 +56,10 @@ public class GameSession {
         return currentPlayer;
     }
 
+    public ClientInfo getClientInfo(String clientId) {
+        return getClientInfo(getPlayer(clientId));
+    }
+
     public Player getPlayer(String clientId) {
         if (client1.getId().equals(clientId)) {
             return Player.FIRST;

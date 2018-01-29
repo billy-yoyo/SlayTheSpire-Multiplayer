@@ -26,4 +26,13 @@ public class IntegerBlock extends AbstractPacketBlock {
     public byte[] getBytes() throws IOException {
         return IOHelper.bytesForNumber(value);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof IntegerBlock && equals((IntegerBlock) obj);
+    }
+
+    private boolean equals(IntegerBlock block) {
+        return block.getValue() == getValue();
+    }
 }

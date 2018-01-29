@@ -5,6 +5,7 @@ import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.helpers.powers.*;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Map;
  */
 public class PowerLibrary {
 
-    public static Map<String, AbstractPowerFactory> factoryMap;
+    public static Map<String, AbstractPowerFactory> factoryMap = new HashMap<>();
 
     public static void register(String id, AbstractPowerFactory factory) {
         factoryMap.put(id, factory);
@@ -20,6 +21,15 @@ public class PowerLibrary {
 
     public static void register(AbstractPowerFactory factory) {
         register(factory.getPowerId(), factory);
+    }
+
+    private static boolean initialized = false;
+
+    public static void ensureInitialized() {
+        if (!initialized) {
+            initialized = true;
+            registerAll();
+        }
     }
 
     public static void registerAll() {
@@ -122,6 +132,7 @@ public class PowerLibrary {
     }
 
     public static AbstractPower create(AbstractPowerDTO dto, CreateData data) {
+        ensureInitialized();
         AbstractPowerFactory factory = factoryMap.get(dto.getId());
 
         if (factory != null) {

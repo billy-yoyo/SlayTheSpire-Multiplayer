@@ -14,6 +14,9 @@ import java.util.List;
 public class IOHelper {
 
     public static final String STRING_BYTE_ENCODING = "UTF-8";
+    public static final ByteOrder NUMBER_BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
+    public static final int NUMBER_BYTES = 4;
+    public static final int BUFFER_SIZE = 1024;
 
     public static boolean charIsDigit(char c) {
         return c == '0' || c == '1' || c == '2' || c == '3'
@@ -21,16 +24,26 @@ public class IOHelper {
                 || c == '8' || c == '9';
     }
 
+    public static String stringFromBytes(byte[] bytes, boolean lengthRead) throws IOException {
+        byte[] actualString = bytes;
+        if (!lengthRead) {
+            actualString = new byte[bytes.length - NUMBER_BYTES];
+            System.arraycopy(bytes, NUMBER_BYTES, actualString, 0, actualString.length);
+        }
+
+        return new String(actualString, STRING_BYTE_ENCODING);
+    }
+
     public static String stringFromBytes(byte[] bytes) throws IOException {
-        return new String(bytes, STRING_BYTE_ENCODING);
+        return stringFromBytes(bytes, false);
     }
 
     public static int numberFromBytes(byte[] number) throws IOException {
-        if (number.length != 4) {
-            throw new IOException("invalid length for number, must be 4 bytes");
+        if (number.length != NUMBER_BYTES) {
+            throw new IOException("invalid length for number, must be " + NUMBER_BYTES + " bytes");
         }
 
-        return ByteBuffer.wrap(number).getInt();
+        return ByteBuffer.wrap(number).order(NUMBER_BYTE_ORDER).getInt();
     }
 
     private static boolean booleanFromByte(int b) throws IOException {
@@ -53,8 +66,18 @@ public class IOHelper {
      * variable -> bytes methods
      */
 
+    public static byte[] combineByteArrays(byte[] first, byte[] second) {
+        byte[] combined = new byte[first.length + second.length];
+
+        System.arraycopy(first, 0, combined, 0, first.length);
+        System.arraycopy(second, 0, combined, first.length, second.length);
+
+        return combined;
+    }
+
+
     public static byte[] bytesForNumber(int number) {
-        return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(number).array();
+        return ByteBuffer.allocate(NUMBER_BYTES).order(NUMBER_BYTE_ORDER).putInt(number).array();
     }
 
     public static byte[] bytesForSingleByteInt(int b) {
@@ -71,11 +94,7 @@ public class IOHelper {
         byte[] stringBytes = s.getBytes(STRING_BYTE_ENCODING);
         byte[] stringLengthBytes = bytesForNumber(stringBytes.length);
 
-        byte[] combined = new byte[stringBytes.length + stringLengthBytes.length];
-        System.arraycopy(stringLengthBytes, 0, combined, 0, stringLengthBytes.length);
-        System.arraycopy(stringBytes, 0, combined, stringLengthBytes.length, stringBytes.length);
-
-        return combined;
+        return combineByteArrays(stringLengthBytes, stringBytes);
     }
 
     public static byte[] bytesForBoolean(boolean bool) {
@@ -109,7 +128,7 @@ public class IOHelper {
     }
 
     public static int readNumber(InputStream input) throws IOException {
-        byte[] number = new byte[4];
+        byte[] number = new byte[NUMBER_BYTES];
         int read = input.read(number);
 
         if (read != number.length) {
@@ -121,7 +140,7 @@ public class IOHelper {
 
     private static byte[] bufferedReadBytes(InputStream input, int length) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
         int left = length;
         int read;
 
@@ -141,7 +160,7 @@ public class IOHelper {
 
     public static String readString(InputStream input) throws IOException {
         int length = readNumber(input);
-        return stringFromBytes(bufferedReadBytes(input, length));
+        return stringFromBytes(bufferedReadBytes(input, length), true);
     }
 
     public static boolean readBoolean(InputStream input) throws IOException {

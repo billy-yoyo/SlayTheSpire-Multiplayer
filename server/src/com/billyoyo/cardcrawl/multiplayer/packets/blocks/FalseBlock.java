@@ -18,4 +18,9 @@ public class FalseBlock extends AbstractPacketBlock {
     public byte[] getBytes() throws IOException {
         return new byte[0];
     }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof FalseBlock;
+    }
 }

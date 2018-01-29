@@ -26,6 +26,22 @@ public class AbstractPowerDTO implements DTO<AbstractPower> {
         this.card = null;
     }
 
+    public AbstractPowerDTO(String id, int amount, int hpLoss) {
+        this(id, amount, hpLoss, null);
+    }
+
+    public AbstractPowerDTO(String id, int amount, AbstractPowerDTO card) {
+        this(id, amount, 0, null);
+    }
+
+    public AbstractPowerDTO(String id, int amount) {
+        this(id, amount, 0, null);
+    }
+
+    public AbstractPowerDTO(String id) {
+        this(id, 0, 0, null);
+    }
+
     public AbstractPowerDTO(AbstractPower power) {
         int hpLoss = 0;
         if (power instanceof CombustPower) {
@@ -72,11 +88,31 @@ public class AbstractPowerDTO implements DTO<AbstractPower> {
 
     @Override
     public boolean matches(AbstractPower obj) {
-        return obj.ID.equals(id) && obj.amount == amount;
+        return new AbstractPowerDTO(obj).equals(this);
     }
 
     @Override
     public AbstractPower create(CreateData data) {
         return PowerLibrary.create(this, data);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractPowerDTO && equals((AbstractPowerDTO) obj);
+    }
+
+    private boolean equals(AbstractPowerDTO dto) {
+        return dto.getId().equals(getId())
+                && dto.getAmount() == getAmount()
+                && dto.getHpLoss() == getHpLoss()
+                && ((dto.getCard() == null && getCard() == null) || dto.getCard().equals(getCard()));
+    }
+
+    @Override
+    public String toString() {
+        String card = getCard() == null ? "null" : getCard().toString();
+
+        return "AbstractPowerDTO[id=" + getId() + ", amount=" + getAmount()
+                + ", hploss=" + getHpLoss() + ", card=" + card + "]";
     }
 }

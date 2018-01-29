@@ -27,4 +27,13 @@ public class CardGroupTypeBlock extends AbstractPacketBlock {
     public byte[] getBytes() throws IOException {
         return IOHelper.bytesForSingleByteInt(type.ordinal());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CardGroupTypeBlock && equals((CardGroupTypeBlock) obj);
+    }
+
+    private boolean equals(CardGroupTypeBlock block) {
+        return block.getCardType().equals(getCardType());
+    }
 }

@@ -40,4 +40,13 @@ public class AbstractRelicBlock extends AbstractPacketBlock {
 
         return IOHelper.joinBytes(dataList);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractRelicBlock && equals((AbstractRelicBlock) obj);
+    }
+
+    private boolean equals(AbstractRelicBlock block) {
+        return block.getRelic().equals(getRelic());
+    }
 }

@@ -31,7 +31,7 @@ public class AbstractRelicDTO implements DTO<AbstractRelic> {
 
     @Override
     public boolean matches(AbstractRelic relic) {
-        return relic.relicId.equals(id);
+        return new AbstractRelicDTO(relic).equals(this);
     }
 
     @Override
@@ -43,4 +43,20 @@ public class AbstractRelicDTO implements DTO<AbstractRelic> {
         }
         return relic;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractRelicDTO && equals((AbstractRelicDTO) obj);
+    }
+
+    private boolean equals(AbstractRelicDTO dto) {
+        return dto.getId().equals(getId())
+                && dto.getCounter() == getCounter();
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractRelicDTO[id=" + getId() + ", counter=" + getCounter() + "]";
+    }
+
 }

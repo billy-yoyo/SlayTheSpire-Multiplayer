@@ -1,5 +1,8 @@
 package com.billyoyo.cardcrawl.multiplayer.packets;
 
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractPowerDTO;
+import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
 import com.billyoyo.cardcrawl.multiplayer.packets.blocks.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
@@ -55,6 +58,13 @@ public class PacketBuilder {
         }
     }
 
+    public PacketBuilder add(AbstractCardDTO block) {
+        if (block == null) {
+            return addNull();
+        }
+        return add(new AbstractCardBlock(block));
+    }
+
     public PacketBuilder add(AbstractCard block) {
         if (block == null) {
             return addNull();
@@ -69,11 +79,25 @@ public class PacketBuilder {
         return add(new CardGroupTypeBlock(block));
     }
 
+    public PacketBuilder add(AbstractRelicDTO block) {
+        if (block == null) {
+            return addNull();
+        }
+        return add(new AbstractRelicBlock(block));
+    }
+
     public PacketBuilder add(AbstractRelic block) {
         if (block == null) {
             return addNull();
         }
         return add(new AbstractRelicBlock(block));
+    }
+
+    public PacketBuilder add(AbstractPowerDTO block) {
+        if (block == null) {
+            return addNull();
+        }
+        return add(new AbstractPowerBlock(block));
     }
 
     public PacketBuilder add(AbstractPower block) {

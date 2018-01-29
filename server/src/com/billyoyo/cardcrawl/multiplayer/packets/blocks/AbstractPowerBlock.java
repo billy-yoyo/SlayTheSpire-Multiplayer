@@ -45,4 +45,13 @@ public class AbstractPowerBlock extends AbstractPacketBlock {
 
         return IOHelper.joinBytes(dataList);
     }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof AbstractPowerBlock && equals((AbstractPowerBlock) object);
+    }
+
+    private boolean equals(AbstractPowerBlock block) {
+        return block.getPower().equals(getPower());
+    }
 }

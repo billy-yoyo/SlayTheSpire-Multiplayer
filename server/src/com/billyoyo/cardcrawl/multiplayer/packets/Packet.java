@@ -124,7 +124,6 @@ public class Packet {
             output.write(block.getBlockId());
 
             byte[] data = block.getBytes();
-            output.write(IOHelper.bytesForNumber(data.length));
             output.write(data);
         }
     }
@@ -137,4 +136,34 @@ public class Packet {
         return output.toByteArray();
     }
 
+    @Override
+    public String toString() {
+        List<String> blockStrings = new ArrayList<>();
+        for (AbstractPacketBlock block : getBlocks()) {
+            blockStrings.add(block.getClass().getName());
+        }
+
+        String blocks = "[" + String.join(", ", blockStrings) + "]";
+
+        return "Packet[id=" + getEventId() + ", blocks=" + blocks + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Packet && equals((Packet) obj);
+    }
+
+    private boolean equals(Packet packet) {
+        if (packet.getEventId() != getEventId() || packet.getAmountOfBlocks() != getAmountOfBlocks()) {
+            return false;
+        }
+
+        for (int i = 0; i < getAmountOfBlocks(); i++) {
+            if (!packet.getBlocks().get(i).equals(getBlocks().get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

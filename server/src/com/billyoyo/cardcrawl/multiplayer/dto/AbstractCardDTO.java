@@ -37,9 +37,7 @@ public class AbstractCardDTO implements DTO<AbstractCard> {
 
     @Override
     public boolean matches(AbstractCard card) {
-        return card.cardID.equals(id)
-                && card.upgraded == upgraded
-                && card.timesUpgraded == timesUpgraded;
+        return new AbstractCardDTO(card).equals(this);
     }
 
     @Override
@@ -56,4 +54,21 @@ public class AbstractCardDTO implements DTO<AbstractCard> {
         }
         return card;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractCardDTO && equals((AbstractCardDTO) obj);
+    }
+
+    private boolean equals(AbstractCardDTO dto) {
+        return dto.getId().equals(getId())
+                && dto.isUpgraded() == isUpgraded()
+                && dto.getTimesUpgraded() == getTimesUpgraded();
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractCardDTO[id=" + getId() + ", timesUpgraded=" + getTimesUpgraded() + ", upgraded=" + upgraded + "]";
+    }
+
 }

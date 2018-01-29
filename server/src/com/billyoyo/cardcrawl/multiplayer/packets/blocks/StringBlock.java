@@ -26,4 +26,13 @@ public class StringBlock extends AbstractPacketBlock {
     public byte[] getBytes() throws IOException {
         return IOHelper.bytesForString(string);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StringBlock && equals((StringBlock) obj);
+    }
+
+    private boolean equals(StringBlock block) {
+        return block.getString().equals(getString());
+    }
 }

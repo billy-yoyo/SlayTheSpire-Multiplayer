@@ -45,4 +45,9 @@ public class StaticGameHandler {
         manager.phase = GameActionManager.Phase.WAITING_ON_USER;
     }
 
+    public static void launchGame() {
+
+    }
+
+
 }

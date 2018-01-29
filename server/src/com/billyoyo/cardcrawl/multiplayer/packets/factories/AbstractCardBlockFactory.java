@@ -33,4 +33,5 @@ public class AbstractCardBlockFactory extends AbstractPacketBlockFactory<Abstrac
 
         return new AbstractCardBlock(new AbstractCardDTO(cardId, upgraded, timesUpgraded));
     }
+
 }

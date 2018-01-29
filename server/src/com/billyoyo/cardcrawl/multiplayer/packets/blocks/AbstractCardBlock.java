@@ -41,4 +41,13 @@ public class AbstractCardBlock extends AbstractPacketBlock {
 
         return IOHelper.joinBytes(dataList);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof AbstractCardBlock && equals((AbstractCardBlock) obj);
+    }
+
+    private boolean equals(AbstractCardBlock block) {
+        return block.getCard().equals(getCard());
+    }
 }
