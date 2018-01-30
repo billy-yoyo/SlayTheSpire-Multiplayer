@@ -4,10 +4,9 @@ import com.billyoyo.cardcrawl.multiplayer.base.Hub;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.Event;
 import com.billyoyo.cardcrawl.multiplayer.events.EventManager;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.ReadyEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -16,20 +15,31 @@ import java.util.logging.Logger;
 public class ServerHub implements Hub
 {
     private static Logger log = Logger.getLogger(ServerHub.class.getName());
+    private static final int MAX_PACKET_POPS = 10;
 
+    private ServerSettings settings;
     private EventManager eventManager;
     private GameSession gameSession;
 
-    public ServerHub(EventManager eventManager) {
-        this.eventManager = eventManager;
-    }
-
-    public ServerHub() {
+    public ServerHub(ServerSettings settings) {
+        this.settings = settings;
         this.eventManager = new EventManager(this);
     }
 
     public void startLobby(ClientInfo client1, ClientInfo client2) {
         gameSession = new GameSession(this, client1, client2);
+        eventManager.registerListener(new ServerLifecycleListener(this));
+
+        postEvent(new ReadyEvent(client1.getId()));
+        postEvent(new ReadyEvent(client2.getId()));
+    }
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
+    public ServerSettings getSettings() {
+        return settings;
     }
 
     public EventManager getEventManager() {
@@ -43,12 +53,10 @@ public class ServerHub implements Hub
 
     @Override
     public void sendPacket(String destination, Packet packet) {
-        try {
-            gameSession.getClientInfo(destination).getConnection().getPacketOutputStream().write(packet);
-        } catch (IOException exception) {
-            log.warning("failed to send packet with id " + packet.getEventId() + " to client " + destination);
-            exception.printStackTrace();
-        }
+        // right now, if this packet fails to write, it'll be forgotten
+        // this could be remedied by adding an 'onerror' callback to the packet
+        // but that's enhancement territory.
+        gameSession.getClientInfo(destination).getConnection().getOutput().write(packet);
     }
 
     @Override
@@ -64,6 +72,20 @@ public class ServerHub implements Hub
         } catch (Exception exception) {
             log.warning("failed to receive packet with id " + packet.getEventId() + " from client " + source);
             exception.printStackTrace();
+        }
+    }
+
+    private void popPackets(GameSession.Player player) {
+        gameSession.getClientInfo(player)
+                .getConnection()
+                .popPackets(this, MAX_PACKET_POPS);
+    }
+
+    @Override
+    public void update() {
+        if (gameSession != null) {
+            popPackets(GameSession.Player.FIRST);
+            popPackets(GameSession.Player.SECOND);
         }
     }
 }

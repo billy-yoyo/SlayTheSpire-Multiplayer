@@ -2,6 +2,7 @@ package com.billyoyo.cardcrawl.multiplayer.server;
 
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.ContinueTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.EndTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.StartTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.UpdateOpponentStatsEvent;
@@ -39,12 +40,13 @@ public class GameSession {
     private ClientPlayer player1;
     private ClientPlayer player2;
 
-    private GameRoom room;
+    private GameRoom room = null;
 
     private ArrayList<AbstractRelicDTO> randomRelics;
     private ArrayList<AbstractCardDTO> randomCards;
 
     private Player currentPlayer = Player.FIRST;
+    private boolean gameIsBusy = true;
 
     public GameSession(ServerHub hub, ClientInfo client1, ClientInfo client2) {
         this.hub = hub;
@@ -54,6 +56,10 @@ public class GameSession {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public boolean isGameBusy() {
+        return gameIsBusy;
     }
 
     public ClientInfo getClientInfo(String clientId) {
@@ -82,6 +88,10 @@ public class GameSession {
         return player.choose(player1, player2);
     }
 
+    public boolean canPlay(Player player) {
+        return !isGameBusy() && getCurrentPlayer() == player;
+    }
+
     public AbstractCard getCard(Player player, AbstractCardDTO card) {
         ClientPlayer clientPlayer = getClientPlayer(player);
 
@@ -94,9 +104,8 @@ public class GameSession {
         return null;
     }
 
-    public void playCard(Player player, AbstractCardDTO cardDto) {
-        AbstractCard card = getCard(cardDto);
-
+    public void playCard(Player player, AbstractCard card) {
+        gameIsBusy = true;
         ClientPlayer clientPlayer = getClientPlayer(player);
         ClientPlayer opponentPlayer = getClientPlayer(getOtherPlayer(player));
 
@@ -122,17 +131,21 @@ public class GameSession {
 
         hub.postEvent(new UpdateOpponentStatsEvent(opponentInfo.getId(), snapshot));
         hub.postEvent(new UpdateStatsEvent(opponentInfo.getId(), opponentSnapshot));
+
+        hub.postEvent(new ContinueTurnEvent(clientInfo.getId()));
     }
 
-    public AbstractCard getCard(AbstractCardDTO card) {
-        return getCard(currentPlayer, card);
-    }
+    public void onReady(String clientId) {
+        ClientInfo info = getClientInfo(getPlayer(clientId));
 
-    public void playCard(AbstractCardDTO card) {
-        playCard(currentPlayer, card);
+        info.setReady(true);
+        if (client1.isReady() && client2.isReady()) {
+            startGame();
+        }
     }
 
     public void startGame() {
+        gameIsBusy = true;
         currentPlayer = Player.FIRST;
 
         player1 = new ClientPlayer(hub, client1, client1.getName(), client1.getPlayerClass());
@@ -159,6 +172,7 @@ public class GameSession {
     }
 
     public void endTurn() {
+        gameIsBusy = true;
         switch (currentPlayer) {
             case SECOND:
                 currentPlayer = Player.FIRST;
@@ -189,8 +203,16 @@ public class GameSession {
         ClientInfo clientInfo = getClientInfo(player);
         ClientPlayer clientPlayer = getClientPlayer(player);
 
+        gameIsBusy = false;
         hub.postEvent(new StartTurnEvent(clientInfo.getId()));
         clientPlayer.sessionStartTurn(firstTurn);
+    }
+
+    private void continuePlayerTurn(Player player) {
+        ClientInfo clientInfo = getClientInfo(player);
+
+        gameIsBusy = false;
+        hub.postEvent(new ContinueTurnEvent(clientInfo.getId()));
     }
 
     private void generateRelics() {

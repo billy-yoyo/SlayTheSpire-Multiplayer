@@ -1,6 +1,5 @@
 package com.billyoyo.cardcrawl.multiplayer.events;
 
-import com.billyoyo.cardcrawl.multiplayer.base.Hub;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
@@ -17,12 +16,6 @@ public abstract class EventProcessor<T extends Event> {
 
     protected PacketBuilder createPacketBuilder(T event) {
         return new PacketBuilder().setEventId(event.getEventId());
-    }
-
-    public void sendPacket(Hub hub, T event) {
-        Packet packet = processEvent(event);
-
-        hub.sendPacket(event.getClientId(), packet);
     }
 
     public void registerProcessor(EventManager manager) {

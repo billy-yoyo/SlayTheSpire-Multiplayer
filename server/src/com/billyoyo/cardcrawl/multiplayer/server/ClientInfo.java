@@ -8,20 +8,19 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
  */
 public class ClientInfo {
 
-    private String id;
     private String name;
     private AbstractPlayer.PlayerClass playerClass;
     private Connection connection;
+    private boolean ready = false;
 
-    public ClientInfo(String clientId, Connection connection, String clientName, AbstractPlayer.PlayerClass playerClass) {
-        this.id = clientId;
+    public ClientInfo(Connection connection, String clientName, AbstractPlayer.PlayerClass playerClass) {
         this.name = clientName;
         this.playerClass = playerClass;
         this.connection = connection;
     }
 
-    public ClientInfo(String clientId, Connection connection) {
-        this(clientId, connection, "Unknown", AbstractPlayer.PlayerClass.IRONCLAD);
+    public ClientInfo(Connection connection) {
+        this(connection, "Unknown", AbstractPlayer.PlayerClass.IRONCLAD);
     }
 
     public AbstractPlayer.PlayerClass getPlayerClass() {
@@ -29,7 +28,7 @@ public class ClientInfo {
     }
 
     public String getId() {
-        return id;
+        return connection.getId();
     }
 
     public String getName() {
@@ -38,5 +37,13 @@ public class ClientInfo {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }

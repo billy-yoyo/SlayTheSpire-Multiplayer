@@ -1,5 +1,8 @@
 package com.billyoyo.cardcrawl.multiplayer.server;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayer;
 import com.billyoyo.cardcrawl.multiplayer.server.room.GameRoom;
 import com.megacrit.cardcrawl.actions.GameActionManager;
@@ -45,8 +48,18 @@ public class StaticGameHandler {
         manager.phase = GameActionManager.Phase.WAITING_ON_USER;
     }
 
-    public static void launchGame() {
+    public static void launchServer() {
+        try {
+            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+            config.title = "mock-test";
+            config.useGL30 = false;
+            config.width = 1;
+            config.height = 1;
 
+            new LwjglApplication(new ServerApplicationListener(), config);
+        } catch (Exception e) {
+            Gdx.app.exit();
+        }
     }
 
 

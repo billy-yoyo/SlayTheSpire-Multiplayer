@@ -12,31 +12,29 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.relicgroup.UpdateRel
  */
 public class RelicGroupEventListener implements EventListener {
 
-    public void onAddRelic(AddRelicEvent event) {}
-    public void onClearRelics(ClearRelicsEvent event) {}
-    public void onRemoveRelic(RemoveRelicEvent event) {}
-    public void onUpdateRelics(UpdateRelicsEvent event) {}
+    public boolean onAddRelic(AddRelicEvent event) { return false; }
+    public boolean onClearRelics(ClearRelicsEvent event) { return false; }
+    public boolean onRemoveRelic(RemoveRelicEvent event) { return false; }
+    public boolean onUpdateRelics(UpdateRelicsEvent event) { return false; }
 
     @Override
-    public void notify(Event event) {
+    public boolean notify(Event event) {
         if (event instanceof AddRelicEvent) {
-            onAddRelic((AddRelicEvent) event);
-            return;
+            return onAddRelic((AddRelicEvent) event);
         }
 
         if (event instanceof ClearRelicsEvent) {
-            onClearRelics((ClearRelicsEvent) event);
-            return;
+            return onClearRelics((ClearRelicsEvent) event);
         }
 
         if (event instanceof RemoveRelicEvent) {
-            onRemoveRelic((RemoveRelicEvent) event);
-            return;
+            return onRemoveRelic((RemoveRelicEvent) event);
         }
 
         if (event instanceof UpdateRelicsEvent) {
-            onUpdateRelics((UpdateRelicsEvent) event);
-            return;
+            return onUpdateRelics((UpdateRelicsEvent) event);
         }
+
+        return false;
     }
 }

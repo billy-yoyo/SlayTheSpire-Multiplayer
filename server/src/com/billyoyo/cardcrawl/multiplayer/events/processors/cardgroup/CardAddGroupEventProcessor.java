@@ -5,8 +5,6 @@ import com.billyoyo.cardcrawl.multiplayer.events.EventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.CardAddGroupEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
-import com.billyoyo.cardcrawl.multiplayer.packets.blocks.AbstractCardBlock;
-import com.billyoyo.cardcrawl.multiplayer.packets.blocks.CardGroupTypeBlock;
 
 /**
  * Created by william on 26/01/2018.

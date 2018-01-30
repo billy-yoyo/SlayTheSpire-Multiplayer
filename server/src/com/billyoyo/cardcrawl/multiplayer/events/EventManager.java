@@ -2,6 +2,7 @@ package com.billyoyo.cardcrawl.multiplayer.events;
 
 import com.billyoyo.cardcrawl.multiplayer.base.Hub;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.InvalidEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.filters.CardGroupFilter;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.cardgroup.*;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.lifecycle.*;
@@ -15,7 +16,6 @@ import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.ClearReli
 import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.RemoveRelicEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.events.processors.relicgroup.UpdateRelicsEventProcessor;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
-import com.billyoyo.cardcrawl.multiplayer.server.ServerHub;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,13 +78,15 @@ public class EventManager {
         new RemovePowerEventProcessor().registerProcessor(this);
         new UpdatePowersEventProcessor().registerProcessor(this);
 
-
         // lifecycle
         new EndTurnEventProcessor().registerProcessor(this);
         new StartTurnEventProcessor().registerProcessor(this);
         new ContinueTurnEventProcessor().registerProcessor(this);
         new GameFinishedEventProcessor().registerProcessor(this);
         new PlayCardEventProcessor().registerProcessor(this);
+        new ReadyEventProcessor().registerProcessor(this);
+        new OutOfOrderEventProcessor().registerProcessor(this);
+        new InvalidEventProcessor().registerProcessor(this);
     }
 
     // register all filters
@@ -116,7 +118,8 @@ public class EventManager {
         try {
             event = filterEvent(event);
             if (event != null) {
-                processorMap.get(event.getEventId()).sendPacket(hub, event);
+                Packet packet = processorMap.get(event.getEventId()).processEvent(event);
+                hub.sendPacket(event.getClientId(), packet);
             }
         } catch (Exception e) {
             // fail event
@@ -125,10 +128,14 @@ public class EventManager {
         }
     }
 
-    public void notifyListeners(Event event) {
+    public boolean notifyListeners(Event event) {
+        boolean accepted = false;
         for (EventListener listener : listeners) {
-            listener.notify(event);
+            if (listener.notify(event)) {
+                accepted = true;
+            }
         }
+        return accepted;
     }
 
     public void receive(CreateData data, Packet packet) {
@@ -136,7 +143,10 @@ public class EventManager {
             EventProcessor processor = processorMap.get(packet.getEventId());
             Event event = processor.processPacket(data, packet);
 
-            notifyListeners(event);
+            boolean eventAccepted = notifyListeners(event);
+            if (!eventAccepted) {
+                hub.postEvent(new InvalidEvent(data.getClientId(), event));
+            }
         } catch (Exception e) {
             // failed to receive event
             log.warning("failed to receive event with id " + packet.getEventId());

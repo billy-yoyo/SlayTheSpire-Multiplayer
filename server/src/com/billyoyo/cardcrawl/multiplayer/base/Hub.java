@@ -11,5 +11,6 @@ public interface Hub {
     public void postEvent(Event event);
     public void sendPacket(String destination, Packet packet);
     public void receivePacket(String source, Packet packet);
+    public void update();
 
 }

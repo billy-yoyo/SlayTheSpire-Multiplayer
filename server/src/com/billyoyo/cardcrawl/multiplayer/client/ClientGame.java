@@ -9,9 +9,15 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 public class ClientGame {
 
     private ClientHub hub;
+    private ServerInfo server;
 
-    public ClientGame(ClientHub hub) {
+    public ClientGame(ClientHub hub, ServerInfo server) {
         this.hub = hub;
+        this.server = server;
+    }
+
+    public ServerInfo getServer() {
+        return server;
     }
 
     public AbstractPlayer getPlayer() {

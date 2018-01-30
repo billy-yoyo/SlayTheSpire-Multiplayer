@@ -9,55 +9,50 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.*;
  */
 public class CardGroupEventListener implements EventListener {
 
-    public void onCardAdd(CardAddGroupEvent event) {}
-    public void onCardApplyPowers(CardApplyPowersGroupEvent event) {}
-    public void onCardRemove(CardRemoveGroupEvent event) {}
-    public void onCardRemoveId(CardRemoveIdGroupEvent event) {}
-    public void onClearCards(ClearCardsGroupEvent event) {}
-    public void onDiscardAll(DiscardAllGroupEvent event) {}
-    public void onRemoveTopCard(RemoveTopCardGroupEvent event) {}
-    public void onUpdateCards(UpdateCardsGroupEvent event) {}
+    public boolean onCardAdd(CardAddGroupEvent event) { return false; }
+    public boolean onCardApplyPowers(CardApplyPowersGroupEvent event) { return false; }
+    public boolean onCardRemove(CardRemoveGroupEvent event) { return false; }
+    public boolean onCardRemoveId(CardRemoveIdGroupEvent event) { return false; }
+    public boolean onClearCards(ClearCardsGroupEvent event) { return false; }
+    public boolean onDiscardAll(DiscardAllGroupEvent event) { return false; }
+    public boolean onRemoveTopCard(RemoveTopCardGroupEvent event) { return false; }
+    public boolean onUpdateCards(UpdateCardsGroupEvent event) { return false; }
 
     @Override
-    public void notify(Event event) {
+    public boolean notify(Event event) {
         if (event instanceof CardAddGroupEvent) {
-            onCardAdd((CardAddGroupEvent) event);
-            return;
+            return onCardAdd((CardAddGroupEvent) event);
         }
 
         if (event instanceof CardApplyPowersGroupEvent) {
-            onCardApplyPowers((CardApplyPowersGroupEvent) event);
-            return;
+            return onCardApplyPowers((CardApplyPowersGroupEvent) event);
         }
 
         if (event instanceof CardRemoveGroupEvent) {
-            onCardRemove((CardRemoveGroupEvent) event);
-            return;
+            return onCardRemove((CardRemoveGroupEvent) event);
         }
 
         if (event instanceof CardRemoveIdGroupEvent) {
-            onCardRemoveId((CardRemoveIdGroupEvent) event);
-            return;
+            return onCardRemoveId((CardRemoveIdGroupEvent) event);
         }
 
         if (event instanceof ClearCardsGroupEvent) {
-            onClearCards((ClearCardsGroupEvent) event);
-            return;
+            return onClearCards((ClearCardsGroupEvent) event);
         }
 
         if (event instanceof DiscardAllGroupEvent) {
-            onDiscardAll((DiscardAllGroupEvent) event);
-            return;
+            return onDiscardAll((DiscardAllGroupEvent) event);
         }
 
         if (event instanceof RemoveTopCardGroupEvent) {
-            onRemoveTopCard((RemoveTopCardGroupEvent) event);
-            return;
+            return onRemoveTopCard((RemoveTopCardGroupEvent) event);
         }
 
         if (event instanceof UpdateCardsGroupEvent) {
-            onUpdateCards((UpdateCardsGroupEvent) event);
+            return onUpdateCards((UpdateCardsGroupEvent) event);
         }
+
+        return false;
     }
 
 }

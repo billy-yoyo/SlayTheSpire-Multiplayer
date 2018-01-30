@@ -5,6 +5,8 @@ package com.billyoyo.cardcrawl.multiplayer.events;
  */
 public interface EventListener {
 
-    public void notify(Event event);
+    // if notify returns false, an 'invalid' event will be sent back to the
+    // source of the event
+    public boolean notify(Event event);
 
 }

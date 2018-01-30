@@ -12,30 +12,29 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.powergroup.UpdatePow
  */
 public class PowerGroupEventListener implements EventListener {
 
-    public void onAddPower(AddPowerEvent event) {}
-    public void onClearPowers(ClearPowersEvent event) {}
-    public void onRemovePower(RemovePowerEvent event) {}
-    public void onUpdatePowers(UpdatePowersEvent event) {}
+    public boolean onAddPower(AddPowerEvent event) { return false; }
+    public boolean onClearPowers(ClearPowersEvent event) { return false; }
+    public boolean onRemovePower(RemovePowerEvent event) { return false; }
+    public boolean onUpdatePowers(UpdatePowersEvent event) { return false; }
 
     @Override
-    public void notify(Event event) {
+    public boolean notify(Event event) {
         if (event instanceof AddPowerEvent) {
-            onAddPower((AddPowerEvent) event);
-            return;
+            return onAddPower((AddPowerEvent) event);
         }
 
         if (event instanceof ClearPowersEvent) {
-            onClearPowers((ClearPowersEvent) event);
-            return;
+            return onClearPowers((ClearPowersEvent) event);
         }
 
         if (event instanceof RemovePowerEvent) {
-            onRemovePower((RemovePowerEvent) event);
-            return;
+            return onRemovePower((RemovePowerEvent) event);
         }
 
         if (event instanceof UpdatePowersEvent) {
-            onUpdatePowers((UpdatePowersEvent) event);
+            return onUpdatePowers((UpdatePowersEvent) event);
         }
+
+        return false;
     }
 }

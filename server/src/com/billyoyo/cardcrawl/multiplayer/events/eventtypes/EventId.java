@@ -43,7 +43,10 @@ public enum EventId {
     START_TURN(25),
     END_TURN(26),
     CONTINUE_TURN(27),
-    PLAY_CARD(28);
+    PLAY_CARD(28),
+    READY(29),
+    OUT_OF_ORDER(30),
+    INVALID(31);
 
     private int id;
 

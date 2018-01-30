@@ -9,35 +9,49 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.*;
  */
 public class LifecycleEventListener implements EventListener {
 
-    public void onContinueTurn(ContinueTurnEvent event) {}
-    public void onEndTurn(EndTurnEvent event) {}
-    public void onGameFinished(GameFinishedEvent event) {}
-    public void onStartTurn(StartTurnEvent event) {}
-    public void onPlayCard(PlayCardEvent event) {}
+    public boolean onContinueTurn(ContinueTurnEvent event) { return false; }
+    public boolean onEndTurn(EndTurnEvent event) { return false; }
+    public boolean onGameFinished(GameFinishedEvent event) { return false; }
+    public boolean onStartTurn(StartTurnEvent event) { return false; }
+    public boolean onPlayCard(PlayCardEvent event) { return false; }
+    public boolean onReady(ReadyEvent event) { return false; }
+    public boolean onOutOfOrder(OutOfOrderEvent event) { return false; }
+    public boolean onInvalid(InvalidEvent event) { return false; }
 
     @Override
-    public void notify(Event event) {
+    public boolean notify(Event event) {
         if (event instanceof ContinueTurnEvent) {
-            onContinueTurn((ContinueTurnEvent) event);
-            return;
+            return onContinueTurn((ContinueTurnEvent) event);
         }
 
         if (event instanceof EndTurnEvent) {
-            onEndTurn((EndTurnEvent) event);
-            return;
+            return onEndTurn((EndTurnEvent) event);
         }
 
         if (event instanceof GameFinishedEvent) {
-            onGameFinished((GameFinishedEvent) event);
-            return;
+            return onGameFinished((GameFinishedEvent) event);
         }
 
         if (event instanceof StartTurnEvent) {
-            onStartTurn((StartTurnEvent) event);
+            return onStartTurn((StartTurnEvent) event);
         }
 
         if (event instanceof PlayCardEvent) {
-            onPlayCard((PlayCardEvent) event);
+            return onPlayCard((PlayCardEvent) event);
         }
+
+        if (event instanceof ReadyEvent) {
+            return onReady((ReadyEvent) event);
+        }
+
+        if (event instanceof OutOfOrderEvent) {
+            return onOutOfOrder((OutOfOrderEvent) event);
+        }
+
+        if (event instanceof InvalidEvent) {
+            return onInvalid((InvalidEvent) event);
+        }
+
+        return false;
     }
 }

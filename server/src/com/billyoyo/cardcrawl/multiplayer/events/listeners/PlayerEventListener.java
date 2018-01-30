@@ -9,48 +9,44 @@ import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.player.*;
  */
 public class PlayerEventListener implements EventListener {
 
-    public void onGainPotion(GainPotionEvent event) {}
-    public void onLosePotion(LosePotionEvent event) {}
-    public void onUpdateEnergy(UpdateEnergyEvent event) {}
-    public void onUpdateGold(UpdateGoldEvent event) {}
-    public void onUpdateHealth(UpdateHealthEvent event) {}
-    public void onUpdateOpponentStats(UpdateOpponentStatsEvent event) {}
-    public void onUpdateStats(UpdateStatsEvent event) {}
+    public boolean onGainPotion(GainPotionEvent event) { return false; }
+    public boolean onLosePotion(LosePotionEvent event) { return false; }
+    public boolean onUpdateEnergy(UpdateEnergyEvent event) { return false; }
+    public boolean onUpdateGold(UpdateGoldEvent event) { return false; }
+    public boolean onUpdateHealth(UpdateHealthEvent event) { return false; }
+    public boolean onUpdateOpponentStats(UpdateOpponentStatsEvent event) { return false; }
+    public boolean onUpdateStats(UpdateStatsEvent event) { return false; }
 
     @Override
-    public void notify(Event event) {
+    public boolean notify(Event event) {
         if (event instanceof GainPotionEvent) {
-            onGainPotion((GainPotionEvent) event);
-            return;
+            return onGainPotion((GainPotionEvent) event);
         }
 
         if (event instanceof LosePotionEvent) {
-            onLosePotion((LosePotionEvent) event);
-            return;
+            return onLosePotion((LosePotionEvent) event);
         }
 
         if (event instanceof UpdateEnergyEvent) {
-            onUpdateEnergy((UpdateEnergyEvent) event);
-            return;
+            return onUpdateEnergy((UpdateEnergyEvent) event);
         }
 
         if (event instanceof UpdateGoldEvent) {
-            onUpdateGold((UpdateGoldEvent) event);
-            return;
+            return onUpdateGold((UpdateGoldEvent) event);
         }
 
         if (event instanceof UpdateHealthEvent) {
-            onUpdateHealth((UpdateHealthEvent) event);
-            return;
+            return onUpdateHealth((UpdateHealthEvent) event);
         }
 
         if (event instanceof UpdateOpponentStatsEvent) {
-            onUpdateOpponentStats((UpdateOpponentStatsEvent) event);
-            return;
+            return onUpdateOpponentStats((UpdateOpponentStatsEvent) event);
         }
 
         if (event instanceof UpdateStatsEvent) {
-            onUpdateStats((UpdateStatsEvent) event);
+            return onUpdateStats((UpdateStatsEvent) event);
         }
+
+        return false;
     }
 }
