@@ -2,6 +2,7 @@ package com.billyoyo.cardcrawl.multiplayer.server;
 
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.cardgroup.CardRemoveGroupEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.ContinueTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.EndTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.StartTurnEvent;
@@ -13,6 +14,7 @@ import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayer;
 import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayerSnapshot;
 import com.billyoyo.cardcrawl.multiplayer.server.room.GameRoom;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.characters.Ironclad;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
@@ -115,6 +117,9 @@ public class GameSession {
         Objects.requireNonNull(clientPlayer);
         Objects.requireNonNull(clientInfo);
         Objects.requireNonNull(card);
+
+        // remove the card from the players hand ASAP
+        hub.postEvent(new CardRemoveGroupEvent(clientInfo.getId(), CardGroup.CardGroupType.HAND, card));
 
         ClientMonster opponent = new ClientMonster(opponentPlayer);
 

@@ -18,11 +18,13 @@ public class RemovePowerEventProcessor extends EventProcessor<RemovePowerEvent> 
     @Override
     public Packet processEvent(RemovePowerEvent event) {
         return createPacketBuilder(event)
+                .add(event.isOwnerOpponent())
                 .add(event.getPower()).build();
     }
 
     @Override
     public RemovePowerEvent processPacket(CreateData data, Packet packet) {
-        return new RemovePowerEvent(data.getClientId(), packet.getPower(0).create(data));
+        return new RemovePowerEvent(data.getClientId(), packet.getBoolean(0),
+                packet.getPower(0).create(data));
     }
 }

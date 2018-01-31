@@ -1,63 +1,20 @@
 package com.billyoyo.cardcrawl.multiplayer.test.mocks;
 
-import com.badlogic.gdx.ApplicationListener;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
-import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.localization.LocalizedStrings;
-
 /**
  * Created by william on 29/01/2018.
  */
-public abstract class MockTest implements ApplicationListener {
+public abstract class MockTest {
 
-    public final String lockString = "lock";
-    private boolean locked = false;
-
-    public boolean isLocked() {
-        return locked;
-    }
+    private boolean done = false;
 
     public abstract void run();
 
-    private void initializeGame() {
-        Settings.initialize();
-        CardCrawlGame.languagePack = new LocalizedStrings();
+    public boolean isDone() {
+        return done;
     }
 
-    @Override
-    public void create() {
-        synchronized (lockString) {
-            locked = true;
-
-            System.out.println("hello world");
-            initializeGame();
-            run();
-        }
-
-    }
-
-    @Override
-    public void resize(int i, int i1) {
-
-    }
-
-    @Override
-    public void render() {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void dispose() {
-
+    public void start() {
+        run();
+        done = true;
     }
 }

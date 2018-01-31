@@ -1,13 +1,16 @@
 package com.billyoyo.cardcrawl.multiplayer.dto;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
-import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 
 /**
  * Created by william on 27/01/2018.
  */
 public class AbstractCardDTO implements DTO<AbstractCard> {
+
+    public static boolean matches(AbstractCard card1, AbstractCard card2) {
+        return new AbstractCardDTO(card1).equals(new AbstractCardDTO(card2));
+    }
 
     private final String id;
     private final boolean upgraded;

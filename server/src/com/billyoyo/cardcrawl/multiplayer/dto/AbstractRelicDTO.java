@@ -1,6 +1,5 @@
 package com.billyoyo.cardcrawl.multiplayer.dto;
 
-import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
@@ -8,6 +7,10 @@ import com.megacrit.cardcrawl.relics.AbstractRelic;
  * Created by william on 27/01/2018.
  */
 public class AbstractRelicDTO implements DTO<AbstractRelic> {
+
+    public static boolean matches(AbstractRelic relic1, AbstractRelic relic2) {
+        return new AbstractRelicDTO(relic1).equals(new AbstractRelicDTO(relic2));
+    }
 
     private final String id;
     private final int counter;

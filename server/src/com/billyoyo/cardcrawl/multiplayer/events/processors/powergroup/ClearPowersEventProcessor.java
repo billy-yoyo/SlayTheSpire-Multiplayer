@@ -17,11 +17,12 @@ public class ClearPowersEventProcessor extends EventProcessor<ClearPowersEvent> 
 
     @Override
     public Packet processEvent(ClearPowersEvent event) {
-        return createPacketBuilder(event).build();
+        return createPacketBuilder(event)
+                .add(event.isOwnerOpponent()).build();
     }
 
     @Override
     public ClearPowersEvent processPacket(CreateData data, Packet packet) {
-        return new ClearPowersEvent(data.getClientId());
+        return new ClearPowersEvent(data.getClientId(), packet.getBoolean(0));
     }
 }

@@ -56,7 +56,7 @@ public class StaticGameHandler {
             config.width = 1;
             config.height = 1;
 
-            new LwjglApplication(new ServerApplicationListener(), config);
+            new LwjglApplication(new ServerApplicationListener(config.preferencesDirectory), config);
         } catch (Exception e) {
             Gdx.app.exit();
         }

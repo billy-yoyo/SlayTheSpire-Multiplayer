@@ -1,13 +1,11 @@
 package com.billyoyo.cardcrawl.multiplayer.server.sockets;
 
 import com.billyoyo.cardcrawl.multiplayer.server.ServerSettings;
+import com.billyoyo.cardcrawl.multiplayer.util.IdHelper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -16,9 +14,6 @@ import java.util.logging.Logger;
 public class ServerConnectionService extends Thread {
 
     private static final Logger log = Logger.getLogger(ServerConnectionService.class.getName());
-    private static final String ALPHANUMERIC = "abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXY0123456789";
-    private static final int UNIQUE_ID_LENGTH = 32;
-    private final List<String> uniqueIds = new ArrayList<>();
 
     private final ServerConnectionAcceptor acceptor;
     private final ServerSettings settings;
@@ -30,38 +25,12 @@ public class ServerConnectionService extends Thread {
         this.settings = settings;
     }
 
-    private String generateId() {
-        StringBuilder builder = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < UNIQUE_ID_LENGTH; i++) {
-            builder.append(ALPHANUMERIC.charAt(random.nextInt(ALPHANUMERIC.length())));
-        }
-
-        return builder.toString();
-    }
-
-    private String generateUniqueId() {
-        String id = generateId();
-        int retries = 0;
-
-        while (uniqueIds.contains(id) && retries < 100) {
-            id = generateId();
-        }
-
-        if (retries >= 100) {
-            throw new RuntimeException("failed to generate unique id");
-        }
-
-        return id;
-    }
-
     private void acceptLoop() {
         while (true) {
             Socket clientSocket = null;
             try {
                 clientSocket = serverSocket.accept();
-                ServerConnection connection = new ServerConnection(clientSocket, generateUniqueId());
+                ServerConnection connection = new ServerConnection(clientSocket, IdHelper.generateUniqueId());
 
                 if (acceptor.canAccept(connection)) {
                     acceptor.accept(connection);
@@ -69,13 +38,13 @@ public class ServerConnectionService extends Thread {
                     connection.close();
                 }
             } catch (Exception exception) {
-                log.warning("failed to accept client socket");
+                log.warning("failed to accept client sockets");
 
                 if (clientSocket != null) {
                     try {
                         clientSocket.close();
                     } catch (Exception e) {
-                        // ignore socket close error
+                        // ignore sockets close error
                     }
                 }
             }

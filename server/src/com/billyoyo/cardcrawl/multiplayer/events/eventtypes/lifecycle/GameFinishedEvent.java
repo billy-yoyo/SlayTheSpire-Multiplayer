@@ -21,7 +21,8 @@ public class GameFinishedEvent extends BaseClientEvent {
 
     public enum GameState {
         VICTORY(0),
-        DEFEAT(1);
+        DEFEAT(1),
+        SURRENDER(2);
 
         private int id;
 

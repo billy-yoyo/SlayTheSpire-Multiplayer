@@ -1,4 +1,4 @@
-package com.billyoyo.cardcrawl.multiplayer.client;
+package com.billyoyo.cardcrawl.multiplayer.client.sockets;
 
 import com.billyoyo.cardcrawl.multiplayer.base.Connection;
 import com.billyoyo.cardcrawl.multiplayer.packets.PacketInputStream;
@@ -47,5 +47,18 @@ public class ClientConnection extends Connection {
         input.shutdown();
         output.shutdown();
         serverSocket.close();
+    }
+
+    public boolean ensureConnected() {
+        try {
+            if (!serverSocket.isConnected() || serverSocket.isClosed()) {
+                close();
+                return false;
+            }
+        } catch (IOException exception) {
+            return false;
+        }
+
+        return true;
     }
 }

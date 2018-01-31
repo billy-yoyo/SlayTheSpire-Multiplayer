@@ -1,10 +1,6 @@
 package com.billyoyo.cardcrawl.multiplayer.dto;
 
 import com.billyoyo.cardcrawl.multiplayer.helpers.PowerLibrary;
-import com.billyoyo.cardcrawl.multiplayer.helpers.powers.CombustPowerFactory;
-import com.billyoyo.cardcrawl.multiplayer.helpers.powers.NightmarePowerFactory;
-import com.megacrit.cardcrawl.core.AbstractCreature;
-import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.powers.*;
 
 /**
@@ -12,7 +8,9 @@ import com.megacrit.cardcrawl.powers.*;
  */
 public class AbstractPowerDTO implements DTO<AbstractPower> {
 
-
+    public static boolean matches(AbstractPower power1, AbstractPower power2) {
+        return new AbstractPowerDTO(power1).equals(new AbstractPowerDTO(power2));
+    }
 
     private final String id;
     private final int amount;

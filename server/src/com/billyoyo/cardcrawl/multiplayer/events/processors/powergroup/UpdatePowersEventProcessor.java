@@ -24,6 +24,8 @@ public class UpdatePowersEventProcessor extends EventProcessor<UpdatePowersEvent
     public Packet processEvent(UpdatePowersEvent event) {
         PacketBuilder builder = createPacketBuilder(event);
 
+        builder.add(event.isOwnerOpponent());
+
         for (AbstractPower power : event.getPowers()) {
             builder.add(power);
         }
@@ -33,13 +35,13 @@ public class UpdatePowersEventProcessor extends EventProcessor<UpdatePowersEvent
 
     @Override
     public UpdatePowersEvent processPacket(CreateData data, Packet packet) {
-        int amountOfPowers = packet.getAmountOfBlocks();
-        List<AbstractPower> powers = new ArrayList<>(amountOfPowers);
+        int amountOfBlocks = packet.getAmountOfBlocks();
+        List<AbstractPower> powers = new ArrayList<>(amountOfBlocks - 1);
 
-        for (int i = 0; i < amountOfPowers; i++) {
+        for (int i = 1; i < amountOfBlocks; i++) {
             powers.add(packet.getPower(i).create(data));
         }
 
-        return new UpdatePowersEvent(data.getClientId(), powers);
+        return new UpdatePowersEvent(data.getClientId(), packet.getBoolean(0), powers);
     }
 }

@@ -18,11 +18,13 @@ public class AddPowerEventProcessor extends EventProcessor<AddPowerEvent> {
     @Override
     public Packet processEvent(AddPowerEvent event) {
         return createPacketBuilder(event)
+                .add(event.isOwnerOpponent())
                 .add(event.getPower()).build();
     }
 
     @Override
     public AddPowerEvent processPacket(CreateData data, Packet packet) {
-        return new AddPowerEvent(data.getClientId(), packet.getPower(0).create(data));
+        return new AddPowerEvent(data.getClientId(), packet.getBoolean(0),
+                packet.getPower(1).create(data));
     }
 }

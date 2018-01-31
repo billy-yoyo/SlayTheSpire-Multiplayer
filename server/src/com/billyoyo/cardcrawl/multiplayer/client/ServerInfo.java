@@ -1,5 +1,7 @@
 package com.billyoyo.cardcrawl.multiplayer.client;
 
+import com.billyoyo.cardcrawl.multiplayer.client.sockets.ClientConnection;
+
 /**
  * Created by william on 30/01/2018.
  */
