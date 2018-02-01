@@ -15,11 +15,14 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
+import java.util.logging.Logger;
+
 /**
  * Created by william on 28/01/2018.
  */
 public class ClientHub implements Hub {
 
+    private static final Logger log = Logger.getLogger(ClientHub.class.getName());
     private static final int MAX_PACKET_POPS = 10;
 
     private EventManager eventManager;
@@ -102,6 +105,7 @@ public class ClientHub implements Hub {
 
     @Override
     public void postEvent(Event event) {
+        log.info("posting event " + event.getEventId());
         getEventManager().post(event);
     }
 
@@ -115,6 +119,8 @@ public class ClientHub implements Hub {
 
     @Override
     public void receivePacket(String serverId, Packet packet) {
+        log.info("received packet with id " + packet.getEventId());
+
         CreateData data;
         if (opponent == null || AbstractDungeon.player == null) {
             data = new CreateData(serverId);
@@ -127,6 +133,7 @@ public class ClientHub implements Hub {
 
     @Override
     public void update() {
+
         if (server != null && connected) {
             ClientConnection connection = server.getConnection();
 

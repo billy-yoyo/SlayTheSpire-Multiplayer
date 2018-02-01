@@ -15,6 +15,8 @@ public abstract class Connection {
     public abstract PacketOutputStream getOutput();
     public abstract PacketInputStream getInput();
     public abstract void close() throws IOException;
+    public abstract void update();
+    public abstract boolean isConnected();
 
     public void popPackets(Hub hub, int limit) {
         int i = 0;

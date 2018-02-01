@@ -6,12 +6,12 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.MonsterGroup;
-import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.rooms.MonsterRoomBoss;
 
 /**
  * Created by william on 31/01/2018.
  */
-public class OnlineGameRoom extends AbstractRoom {
+public class OnlineGameRoom extends MonsterRoomBoss {
 
     private ClientHub hub;
     private Opponent opponent;
@@ -20,6 +20,7 @@ public class OnlineGameRoom extends AbstractRoom {
         this.hub = hub;
         this.opponent = opponent;
         this.mapSymbol = "B";
+        this.phase = RoomPhase.COMBAT;
     }
 
     @Override
@@ -41,6 +42,8 @@ public class OnlineGameRoom extends AbstractRoom {
         // we don't want errors in server hub to prevent us from continuing the game logic
         } catch (Exception e) {}
 
+        this.souls.update();
+
         switch (phase) {
             case COMBAT:
                 break;
@@ -55,6 +58,9 @@ public class OnlineGameRoom extends AbstractRoom {
             case INCOMPLETE:
                 break;
         }
+
+        AbstractDungeon.player.update();
+        AbstractDungeon.player.updateAnimations();
     }
 
     @Override

@@ -3,18 +3,16 @@ package com.billyoyo.cardcrawl.multiplayer.server;
 import com.badlogic.gdx.ApplicationListener;
 import com.billyoyo.cardcrawl.multiplayer.server.sockets.ServerConnectionAcceptor;
 import com.billyoyo.cardcrawl.multiplayer.server.sockets.ServerConnectionService;
-import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.characters.Ironclad;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
-import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
-import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Created by william on 29/01/2018.
  */
 public class ServerApplicationListener implements ApplicationListener {
+
+    private static final Logger log = Logger.getLogger(ServerApplicationListener.class.getName());
 
     private ServerConnectionAcceptor acceptor = null;
     private String prefDir;
@@ -26,16 +24,12 @@ public class ServerApplicationListener implements ApplicationListener {
     private void initializeCardGame() {
         CardCrawlGame baseGame = new CardCrawlGame(prefDir);
         baseGame.create();
-
-        Settings.seed = new Random().nextLong();
-
-        AbstractDungeon.player = new Ironclad("hello", AbstractPlayer.PlayerClass.IRONCLAD);
-        AbstractDungeon.generateSeeds();
     }
 
     @Override
     public void create() {
         ServerSettings settings = new ServerSettings();
+        initializeCardGame();
 
         acceptor = new ServerConnectionAcceptor(settings);
 

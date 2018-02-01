@@ -150,7 +150,7 @@ public class EventManager {
         } catch (Exception e) {
             // failed to receive event
             log.warning("failed to receive event with id " + packet.getEventId());
-            throw new EventException("failed to receive event with id " + packet.getEventId());
+            throw new EventException("failed to receive event with id " + packet.getEventId(), e);
         }
     }
 }

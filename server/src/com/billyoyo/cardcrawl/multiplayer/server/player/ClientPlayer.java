@@ -14,6 +14,8 @@ import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.cards.CardQueueItem;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.characters.Ironclad;
+import com.megacrit.cardcrawl.core.EnergyManager;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
@@ -30,6 +32,9 @@ public class ClientPlayer extends AbstractPlayer {
 
     public ClientPlayer(ServerHub hub, ClientInfo client, String name, PlayerClass setClass) {
         super(name, setClass);
+        this.initializeClass((String)null, "images/characters/ironclad/shoulder2.png", "images/characters/ironclad/shoulder.png", "images/characters/ironclad/corpse.png", Ironclad.getLoadout(), 20.0F, -10.0F, 220.0F, 290.0F, new EnergyManager(3));
+        this.loadAnimation("images/characters/ironclad/idle/skeleton.atlas", "images/characters/ironclad/idle/skeleton.json", 1.0F);
+
         this.hub = hub;
         this.client = client;
 

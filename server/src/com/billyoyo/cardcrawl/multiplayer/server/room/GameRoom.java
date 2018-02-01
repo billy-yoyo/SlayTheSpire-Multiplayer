@@ -1,6 +1,7 @@
 package com.billyoyo.cardcrawl.multiplayer.server.room;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.monsters.MonsterGroup;
 import com.megacrit.cardcrawl.rooms.MonsterRoom;
 
 /**
@@ -14,7 +15,7 @@ public class GameRoom extends MonsterRoom {
 
     @Override
     public void onPlayerEntry() {
-
+        this.monsters = new MonsterGroup(new NullMonster());
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.billyoyo.cardcrawl.multiplayer.util;
 
-import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -17,6 +18,30 @@ public class IOHelper {
     public static final ByteOrder NUMBER_BYTE_ORDER = ByteOrder.LITTLE_ENDIAN;
     public static final int NUMBER_BYTES = 4;
     public static final int BUFFER_SIZE = 1024;
+
+    public static int safeRead(InputStream input) throws IOException {
+        int b = input.read();
+        if (b == -1) {
+            throw new InputFinishedException();
+        }
+        return b;
+    }
+
+    public static int safeRead(InputStream input, byte[] bytes) throws IOException {
+        int amt = input.read(bytes);
+        if (amt == -1) {
+            throw new InputFinishedException();
+        }
+        return amt;
+    }
+
+    public static int safeRead(InputStream input, byte[] bytes, int off, int length) throws IOException {
+        int amt = input.read(bytes, off, length);
+        if (amt == -1) {
+            throw new InputFinishedException();
+        }
+        return amt;
+    }
 
     public static boolean charIsDigit(char c) {
         return c == '0' || c == '1' || c == '2' || c == '3'
@@ -118,33 +143,22 @@ public class IOHelper {
      */
 
     public static int readByte(InputStream input) throws IOException {
-        int b = input.read();
-
-        if (b < 0) {
-            throw new IOException("failed to read byte, input stream terminated");
-        }
-
-        return b;
+        return safeRead(input);
     }
 
     public static int readNumber(InputStream input) throws IOException {
-        byte[] number = new byte[NUMBER_BYTES];
-        int read = input.read(number);
-
-        if (read != number.length) {
-            throw new IOException("failed to read 4 bytes for number, input stream terminated");
-        }
+        byte[] number = bufferedReadBytes(input, 4);
 
         return numberFromBytes(number);
     }
 
     private static byte[] bufferedReadBytes(InputStream input, int length) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[Math.min(length, BUFFER_SIZE)];
         int left = length;
         int read;
 
-        while (left > 0 && (read = input.read(buffer, 0, Math.min(left, buffer.length))) != -1) {
+        while (left > 0 && (read = safeRead(input, buffer, 0, Math.min(left, buffer.length))) != -1) {
             baos.write(buffer, 0, read);
             left -= read;
         }
@@ -152,7 +166,7 @@ public class IOHelper {
         baos.flush();
 
         if (left > 0) {
-            throw new IOException("failed to read all bytes for string, input stream terminated");
+            throw new InputFinishedException("failed to read all bytes for string, input stream terminated");
         }
 
         return baos.toByteArray();

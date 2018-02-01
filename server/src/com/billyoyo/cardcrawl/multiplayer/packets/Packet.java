@@ -4,12 +4,17 @@ import com.billyoyo.cardcrawl.multiplayer.dto.AbstractCardDTO;
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractPowerDTO;
 import com.billyoyo.cardcrawl.multiplayer.dto.AbstractRelicDTO;
 import com.billyoyo.cardcrawl.multiplayer.packets.blocks.*;
-import com.billyoyo.cardcrawl.multiplayer.util.IOHelper;
 import com.megacrit.cardcrawl.cards.CardGroup;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import static com.billyoyo.cardcrawl.multiplayer.util.IOHelper.safeRead;
 
 /**
  * Created by william on 26/01/2018.
@@ -17,14 +22,18 @@ import java.util.List;
  */
 public class Packet {
 
-    public static Packet read(InputStream input) throws IOException {
-        int eventId = input.read();
+    private static final Logger log = Logger.getLogger(Packet.class.getName());
 
-        int amountOfBlocks = input.read();
+    public static Packet read(InputStream input) throws IOException {
+        int eventId = safeRead(input);
+
+        log.info("reading packet with id " + eventId);
+
+        int amountOfBlocks = safeRead(input);
         List<AbstractPacketBlock> blocks = new ArrayList<>(amountOfBlocks);
 
         for (int i = 0; i < amountOfBlocks; i++) {
-            int blockId = input.read();
+            int blockId =   safeRead(input);
             blocks.add(PacketBlockReader.createBlock(blockId, input));
         }
 
@@ -115,7 +124,6 @@ public class Packet {
             throw new IOException("Too many blocks in a single packet, must be between 0 and 255 inclusive, " + blocks.size() + " were given");
         }
 
-        // for now there are less than 256 events so we can assume 1 byte
         output.write(eventId);
 
         output.write(blocks.size());
@@ -126,6 +134,8 @@ public class Packet {
             byte[] data = block.getBytes();
             output.write(data);
         }
+
+        log.info("successfully wrote packet.");
     }
 
     public byte[] getBytes() throws IOException {

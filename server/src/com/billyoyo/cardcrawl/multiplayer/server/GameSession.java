@@ -157,7 +157,7 @@ public class GameSession {
         player2 = new ClientPlayer(hub, client2, client2.getName(), client2.getPlayerClass());
 
         room = new GameRoom();
-        StaticGameHandler.switchToRoom(room);
+        StaticGameHandler.switchToRoom(player1, room);
 
         generateCards();
         generateRelics();

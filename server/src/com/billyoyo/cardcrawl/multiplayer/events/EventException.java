@@ -9,4 +9,8 @@ public class EventException extends RuntimeException {
         super(message);
     }
 
+    public EventException(String message, Exception cause) {
+        super(message, cause);
+    }
+
 }

@@ -5,7 +5,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.billyoyo.cardcrawl.multiplayer.server.player.ClientPlayer;
 import com.billyoyo.cardcrawl.multiplayer.server.room.GameRoom;
+import com.billyoyo.cardcrawl.multiplayer.util.GameSetup;
 import com.megacrit.cardcrawl.actions.GameActionManager;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 
@@ -18,7 +20,8 @@ public class StaticGameHandler {
         AbstractDungeon.player = player;
     }
 
-    public static void switchToRoom(GameRoom room) {
+    public static void switchToRoom(AbstractPlayer startingPlayer, GameRoom room) {
+        GameSetup.setupGame(startingPlayer, room);
         MapRoomNode roomNode = new MapRoomNode(0, 0);
         roomNode.room = room;
 

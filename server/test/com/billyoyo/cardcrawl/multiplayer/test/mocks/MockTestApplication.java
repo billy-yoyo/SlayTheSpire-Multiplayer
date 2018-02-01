@@ -8,6 +8,7 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ import java.util.Random;
  */
 public class MockTestApplication implements ApplicationListener {
 
-    private final List<MockTest> queuedTests = new ArrayList<>();
+    private final List<MockTest> queuedTests = Collections.synchronizedList(new ArrayList<>());
     private MockTest currentTest = null;
     private boolean loaded = false;
 

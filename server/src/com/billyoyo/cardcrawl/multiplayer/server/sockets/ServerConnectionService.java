@@ -33,8 +33,10 @@ public class ServerConnectionService extends Thread {
                 ServerConnection connection = new ServerConnection(clientSocket, IdHelper.generateUniqueId());
 
                 if (acceptor.canAccept(connection)) {
+                    log.info("accepted client");
                     acceptor.accept(connection);
                 } else {
+                    log.info("refused client");
                     connection.close();
                 }
             } catch (Exception exception) {
@@ -54,6 +56,7 @@ public class ServerConnectionService extends Thread {
     @Override
     public void run() {
         try {
+            log.info("starting server...");
             serverSocket = new ServerSocket(settings.getPort());
             acceptLoop();
         } catch (IOException exception) {

@@ -2,11 +2,14 @@ package com.billyoyo.cardcrawl.multiplayer.packets;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 /**
  * Created by william on 29/01/2018.
  */
 public class PacketOutputStream extends PacketQueueStream {
+
+    private static final Logger log = Logger.getLogger(PacketOutputStream.class.getName());
 
     private OutputStream output;
 
@@ -21,9 +24,12 @@ public class PacketOutputStream extends PacketQueueStream {
     private boolean writePacket(Packet packet) {
         try {
             packet.write(output);
+            output.flush();
             return true;
         } catch (IOException e) {
             // do nothing
+            log.info("failed to write packet:");
+            e.printStackTrace();
         }
         return false;
     }

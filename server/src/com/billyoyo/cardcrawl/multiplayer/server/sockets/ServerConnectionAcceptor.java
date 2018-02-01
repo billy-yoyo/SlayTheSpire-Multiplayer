@@ -1,11 +1,13 @@
 package com.billyoyo.cardcrawl.multiplayer.server.sockets;
 
+import com.billyoyo.cardcrawl.multiplayer.base.Connection;
 import com.billyoyo.cardcrawl.multiplayer.server.ClientInfo;
 import com.billyoyo.cardcrawl.multiplayer.server.ServerHub;
 import com.billyoyo.cardcrawl.multiplayer.server.ServerSettings;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,8 +18,7 @@ public class ServerConnectionAcceptor {
 
     private static final Logger log = Logger.getLogger(ServerConnectionAcceptor.class.getName());
 
-    private final List<ServerConnection> connections = new ArrayList<>();
-    private final List<String> uniqueIds = new ArrayList<>();
+    private final List<ServerConnection> connections = Collections.synchronizedList(new ArrayList<>());
     private boolean gameRunning = false;
 
     private ServerHub hub;
@@ -50,7 +51,6 @@ public class ServerConnectionAcceptor {
                 }
             }
             connections.clear();
-            uniqueIds.clear();
         }
         gameRunning = false;
     }
@@ -63,11 +63,22 @@ public class ServerConnectionAcceptor {
         if (!gameRunning) {
             try {
                 synchronized (connections) {
+                    List<Connection> connectionsCopy = new ArrayList<>(connections);
+
+                    for (Connection connection : connectionsCopy) {
+                        if (!connection.isConnected()) {
+                            log.info("client disconnected");
+                            connections.remove(connection);
+                        }
+                    }
+
                     if (connections.size() == 2) {
                         gameRunning = true;
 
                         ClientInfo client1 = createClientInfo(connections.get(0));
                         ClientInfo client2 = createClientInfo(connections.get(1));
+
+                        log.info("starting lobby");
                         hub.startLobby(client1, client2);
                     }
                 }
@@ -79,6 +90,11 @@ public class ServerConnectionAcceptor {
 
         if (gameRunning) {
             hub.update();
+
+            if (hub.getGameSession() == null) {
+                resetConnections();
+                gameRunning = false;
+            }
         }
     }
 

@@ -1,9 +1,11 @@
 package com.billyoyo.cardcrawl.multiplayer.server;
 
+import com.billyoyo.cardcrawl.multiplayer.base.Connection;
 import com.billyoyo.cardcrawl.multiplayer.base.Hub;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.Event;
 import com.billyoyo.cardcrawl.multiplayer.events.EventManager;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.GameFinishedEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.ReadyEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
 
@@ -48,6 +50,7 @@ public class ServerHub implements Hub
 
     @Override
     public void postEvent(Event event) {
+        log.info("posting event " + event.getEventId() + " to " + event.getClientId());
         getEventManager().post(event);
     }
 
@@ -56,6 +59,7 @@ public class ServerHub implements Hub
         // right now, if this packet fails to write, it'll be forgotten
         // this could be remedied by adding an 'onerror' callback to the packet
         // but that's enhancement territory.
+        log.info("sending packet with id " + packet.getEventId());
         gameSession.getClientInfo(destination).getConnection().getOutput().write(packet);
     }
 
@@ -75,17 +79,35 @@ public class ServerHub implements Hub
         }
     }
 
-    private void popPackets(GameSession.Player player) {
-        gameSession.getClientInfo(player)
-                .getConnection()
-                .popPackets(this, MAX_PACKET_POPS);
+    public void closeLobby(GameFinishedEvent.GameState gameState) {
+        ClientInfo client1 = gameSession.getClientInfo(GameSession.Player.FIRST);
+        ClientInfo client2 = gameSession.getClientInfo(GameSession.Player.SECOND);
+
+        postEvent(new GameFinishedEvent(client1.getId(), gameState));
+        postEvent(new GameFinishedEvent(client2.getId(), gameState));
+
+        gameSession = null;
+    }
+
+    private boolean popPackets(GameSession.Player player) {
+        Connection connection =  gameSession.getClientInfo(player).getConnection();
+        connection.update();
+
+        if (!connection.isConnected()) {
+            closeLobby(GameFinishedEvent.GameState.SURRENDER);
+            return false;
+        } else {
+            connection.popPackets(this, MAX_PACKET_POPS);
+            return true;
+        }
     }
 
     @Override
     public void update() {
         if (gameSession != null) {
-            popPackets(GameSession.Player.FIRST);
-            popPackets(GameSession.Player.SECOND);
+            if (popPackets(GameSession.Player.FIRST)) {
+                popPackets(GameSession.Player.SECOND);
+            }
         }
     }
 }

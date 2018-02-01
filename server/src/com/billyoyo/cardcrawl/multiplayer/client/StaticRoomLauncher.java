@@ -4,9 +4,9 @@ import com.billyoyo.cardcrawl.multiplayer.client.game.OnlineDungeon;
 import com.billyoyo.cardcrawl.multiplayer.client.game.OnlineGameRoom;
 import com.billyoyo.cardcrawl.multiplayer.client.game.OnlinePlayer;
 import com.billyoyo.cardcrawl.multiplayer.client.game.Opponent;
+import com.billyoyo.cardcrawl.multiplayer.util.GameSetup;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.map.MapRoomNode;
 
 /**
  * Created by william on 31/01/2018.
@@ -29,15 +29,13 @@ public class StaticRoomLauncher {
             OnlinePlayer player = new OnlinePlayer(name, hub);
             OnlineGameRoom room = new OnlineGameRoom(hub, opponent);
 
-            AbstractDungeon.player = player;
-            AbstractDungeon.setCurrMapNode(new MapRoomNode(1, 1));
-            AbstractDungeon.currMapNode.room = room;
+            GameSetup.setupGame(player, room);
 
-            CardCrawlGame.dungeonTransitionScreen = null;
             CardCrawlGame.dungeon = new OnlineDungeon(player, hub);
-            CardCrawlGame.mode = CardCrawlGame.GameMode.GAMEPLAY;
+            CardCrawlGame.dungeon.updateFading();
 
-            AbstractDungeon.nextRoomTransitionStart();
+
+            CardCrawlGame.dungeon.nextRoomTransition();
         }
     }
 

@@ -49,6 +49,16 @@ public class ClientConnection extends Connection {
         serverSocket.close();
     }
 
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public boolean isConnected() {
+        return serverSocket.isConnected() && !serverSocket.isClosed();
+    }
+
     public boolean ensureConnected() {
         try {
             if (!serverSocket.isConnected() || serverSocket.isClosed()) {

@@ -1,6 +1,7 @@
 package com.billyoyo.cardcrawl.multiplayer.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -11,7 +12,7 @@ public class IdHelper {
 
     private static final String ALPHANUMERIC = "abcdefghijklmnopqrstuvwxyABCDEFGHIJKLMNOPQRSTUVWXY0123456789";
     private static final int UNIQUE_ID_LENGTH = 32;
-    private static final List<String> uniqueIds = new ArrayList<>();
+    private static final List<String> uniqueIds = Collections.synchronizedList(new ArrayList<>());
 
     private static String generateId() {
         StringBuilder builder = new StringBuilder();

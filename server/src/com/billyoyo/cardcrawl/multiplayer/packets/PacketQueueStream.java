@@ -1,18 +1,24 @@
 package com.billyoyo.cardcrawl.multiplayer.packets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by william on 30/01/2018.
  */
 public class PacketQueueStream extends Thread {
 
-    private final List<Packet> queue = new ArrayList<>();
+    private static final Logger log = Logger.getLogger(PacketQueueStream.class.getName());
+
+    private final List<Packet> queue = Collections.synchronizedList(new ArrayList<>());
     private boolean running = true;
 
     protected void queuePacket(Packet packet) {
+        log.info("waiting to add packet to queue...");
         synchronized (queue) {
+            log.info("adding packet to queue");
             queue.add(packet);
         }
     }
@@ -22,6 +28,7 @@ public class PacketQueueStream extends Thread {
             if (queue.size() == 0) {
                 return null;
             }
+            log.info("found packet in queue");
             return queue.remove(0);
         }
     }
