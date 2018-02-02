@@ -8,6 +8,7 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.util.logging.Logger;
 
@@ -57,16 +58,39 @@ public class ClientCardsListener extends CardGroupEventListener {
     public boolean onCardAdd(CardAddGroupEvent event) {
         CardGroup group = getCardGroup(event);
 
+        System.out.println("adding card: " + event.getCard().cardID + " to group " + event.getCardGroupType().name());
+
         if (group != null && event.getCard() != null) {
             int position = event.getPosition();
 
-            // add to bottom
-            if (position == -1) {
-                group.addToBottom(event.getCard());
-            } else if (position == 0) {
-                group.addToTop(event.getCard());
+            if (group.type == CardGroup.CardGroupType.HAND) {
+                AbstractCard card = event.getCard();
+                card.current_x = CardGroup.DRAW_PILE_X;
+                card.current_y = CardGroup.DRAW_PILE_Y;
+                card.target_x = 300;
+                card.target_y = 300;
+                card.setAngle(0.0F, true);
+                card.lighten(false);
+                card.drawScale = 0.12F;
+                card.targetDrawScale = 0.75F;
+                card.triggerWhenDrawn();
+                AbstractDungeon.player.hand.addToHand(card);
+
+                for (AbstractRelic relic : AbstractDungeon.player.relics) {
+                    relic.onCardDraw(card);
+                }
+
+                AbstractDungeon.player.onCardDrawOrDiscard();
+                AbstractDungeon.player.hand.refreshHandLayout();
             } else {
-                group.group.add(position, event.getCard());
+                // add to bottom
+                if (position == -1) {
+                    group.addToBottom(event.getCard());
+                } else if (position == 0) {
+                    group.addToTop(event.getCard());
+                } else {
+                    group.group.add(position, event.getCard());
+                }
             }
         }
 

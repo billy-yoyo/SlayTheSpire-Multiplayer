@@ -29,6 +29,7 @@ public class ClientRelicGroupListener extends RelicGroupEventListener {
     public boolean onAddRelic(AddRelicEvent event) {
 
         if (AbstractDungeon.player != null) {
+            log.info("adding relic " + event.getRelic().relicId);
             AbstractDungeon.player.relics.add(event.getRelic());
         }
 

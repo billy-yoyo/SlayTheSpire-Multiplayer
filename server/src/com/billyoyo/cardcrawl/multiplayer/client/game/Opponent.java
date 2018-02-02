@@ -24,6 +24,9 @@ public class Opponent extends AbstractMonster {
         this.dialogX = -100.0F * Settings.scale;
         this.dialogY = 10.0F * Settings.scale;
         this.loadAnimation("images/monsters/theCity/champ/skeleton.atlas", "images/monsters/theCity/champ/skeleton.json", 1.0F);
+        this.setMove((byte) -1, Intent.UNKNOWN);
+        this.isDying = false;
+        this.isEscaping = false;
     }
 
     @Override
@@ -35,4 +38,10 @@ public class Opponent extends AbstractMonster {
     protected void getMove(int i) {
 
     }
+
+    @Override
+    public void update() {
+
+    }
+
 }

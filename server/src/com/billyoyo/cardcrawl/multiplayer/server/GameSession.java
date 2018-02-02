@@ -172,6 +172,9 @@ public class GameSession {
         player2.sessionSetRelics(randomRelics);
         player2.sessionStartGame(room);
 
+        hub.postEvent(new UpdateOpponentStatsEvent(client1.getId(), new ClientPlayerSnapshot(player2)));
+        hub.postEvent(new UpdateOpponentStatsEvent(client2.getId(), new ClientPlayerSnapshot(player1)));
+
         StaticGameHandler.switchToPlayer(getClientPlayer(currentPlayer));
         startPlayerTurn(currentPlayer, true);
     }
@@ -208,9 +211,10 @@ public class GameSession {
         ClientInfo clientInfo = getClientInfo(player);
         ClientPlayer clientPlayer = getClientPlayer(player);
 
+        clientPlayer.sessionStartTurn(firstTurn);
+
         gameIsBusy = false;
         hub.postEvent(new StartTurnEvent(clientInfo.getId()));
-        clientPlayer.sessionStartTurn(firstTurn);
     }
 
     private void continuePlayerTurn(Player player) {

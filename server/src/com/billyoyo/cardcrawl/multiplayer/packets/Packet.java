@@ -27,8 +27,6 @@ public class Packet {
     public static Packet read(InputStream input) throws IOException {
         int eventId = safeRead(input);
 
-        log.info("reading packet with id " + eventId);
-
         int amountOfBlocks = safeRead(input);
         List<AbstractPacketBlock> blocks = new ArrayList<>(amountOfBlocks);
 
@@ -134,8 +132,6 @@ public class Packet {
             byte[] data = block.getBytes();
             output.write(data);
         }
-
-        log.info("successfully wrote packet.");
     }
 
     public byte[] getBytes() throws IOException {

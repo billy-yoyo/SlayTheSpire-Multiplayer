@@ -90,9 +90,10 @@ public class ClientCardGroup extends CardGroup {
 
     @Override
     public void removeTopCard() {
+        AbstractCard card = this.group.get(this.group.size() - 1);
         super.removeTopCard();
 
-        hub.postEvent(new RemoveTopCardGroupEvent(client.getId(), type));
+        hub.postEvent(new CardRemoveGroupEvent(client.getId(), type, card));
     }
 
     @Override

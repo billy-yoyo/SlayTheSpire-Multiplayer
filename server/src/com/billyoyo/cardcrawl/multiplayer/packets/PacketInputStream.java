@@ -31,9 +31,7 @@ public class PacketInputStream extends PacketQueueStream {
 
     private boolean nextPacket() {
         try {
-            log.info("reading next packet...");
             Packet packet = Packet.read(input);
-            log.info("packet read...");
             if (packet != null) {
                 queuePacket(packet);
                 return true;

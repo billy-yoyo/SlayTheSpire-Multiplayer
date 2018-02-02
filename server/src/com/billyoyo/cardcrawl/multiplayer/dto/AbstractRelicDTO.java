@@ -43,6 +43,8 @@ public class AbstractRelicDTO implements DTO<AbstractRelic> {
         if (relic != null) {
             relic = relic.makeCopy();
             relic.counter = counter;
+        } else {
+            System.out.println("!!! failed to get relic with id " + id);
         }
         return relic;
     }

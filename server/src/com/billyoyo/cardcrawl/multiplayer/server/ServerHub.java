@@ -5,6 +5,7 @@ import com.billyoyo.cardcrawl.multiplayer.base.Hub;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.Event;
 import com.billyoyo.cardcrawl.multiplayer.events.EventManager;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.GameFinishedEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.ReadyEvent;
 import com.billyoyo.cardcrawl.multiplayer.packets.Packet;
@@ -50,7 +51,7 @@ public class ServerHub implements Hub
 
     @Override
     public void postEvent(Event event) {
-        log.info("posting event " + event.getEventId() + " to " + event.getClientId());
+        // log.info("posting event " + event.getEventId() + " to " + event.getClientId());
         getEventManager().post(event);
     }
 
@@ -59,7 +60,7 @@ public class ServerHub implements Hub
         // right now, if this packet fails to write, it'll be forgotten
         // this could be remedied by adding an 'onerror' callback to the packet
         // but that's enhancement territory.
-        log.info("sending packet with id " + packet.getEventId());
+        log.info("sending packet with id " + EventId.fromId(packet.getEventId()).name() + " to " + destination);
         gameSession.getClientInfo(destination).getConnection().getOutput().write(packet);
     }
 
@@ -72,6 +73,7 @@ public class ServerHub implements Hub
             CreateData data = new CreateData(gameSession.getClientPlayer(player),
                     gameSession.getClientPlayer(otherPlayer), source);
 
+            log.info("received packet with id " + EventId.fromId(packet.getEventId()).name() + " from " + source);
             eventManager.receive(data, packet);
         } catch (Exception exception) {
             log.warning("failed to receive packet with id " + packet.getEventId() + " from client " + source);

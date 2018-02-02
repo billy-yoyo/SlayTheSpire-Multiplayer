@@ -58,4 +58,12 @@ public enum EventId {
         return id;
     }
 
+    public static EventId fromId(int id) {
+        for (EventId eventId : EventId.values()) {
+            if (eventId.getId() == id) {
+                return eventId;
+            }
+        }
+        return null;
+    }
 }

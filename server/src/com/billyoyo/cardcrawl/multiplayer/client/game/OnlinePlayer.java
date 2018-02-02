@@ -3,6 +3,7 @@ package com.billyoyo.cardcrawl.multiplayer.client.game;
 import com.billyoyo.cardcrawl.multiplayer.client.ClientHub;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.EnergyManager;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.screens.CharSelectInfo;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class OnlinePlayer extends AbstractPlayer {
     public OnlinePlayer(String name, ClientHub hub) {
         // for now ironclad is hardset
         super(name, PlayerClass.IRONCLAD);
+        this.dialogX = this.drawX + 0.0F * Settings.scale;
+        this.dialogY = this.drawY + 220.0F * Settings.scale;
         this.initializeClass((String)null, "images/characters/ironclad/shoulder2.png", "images/characters/ironclad/shoulder.png", "images/characters/ironclad/corpse.png", getLoadout(), 20.0F, -10.0F, 220.0F, 290.0F, new EnergyManager(3));
         this.loadAnimation("images/characters/ironclad/idle/skeleton.atlas", "images/characters/ironclad/idle/skeleton.json", 1.0F);
 

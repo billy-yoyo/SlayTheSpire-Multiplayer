@@ -63,4 +63,10 @@ public class ClientPlayerSnapshot {
     public boolean isDead() {
         return dead;
     }
+
+    @Override
+    public String toString() {
+        return "Snapshot[block=" + block + ", health=" + health + ", maxHealth=" + maxHealth + ", gold=" + gold + ", energy=" + energy
+                + ", isbloody=" + bloodied + ", isdead=" + dead + "]";
+    }
 }

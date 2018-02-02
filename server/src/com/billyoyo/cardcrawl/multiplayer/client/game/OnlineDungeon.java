@@ -3,7 +3,6 @@ package com.billyoyo.cardcrawl.multiplayer.client.game;
 import com.billyoyo.cardcrawl.multiplayer.client.ClientHub;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.helpers.InputHelper;
 
 import java.util.ArrayList;
 
@@ -20,6 +19,9 @@ public class OnlineDungeon extends AbstractDungeon {
         super(ONLINE_DUNGEON_ID, ONLINE_DUNGEON_ID, p, new ArrayList<>());
         this.hub = hub;
         //this.ftue = new FtueTip();
+        this.initializeRelicList();
+        this.initializeCardPools();
+        this.initializeEventImg();
     }
 
     @Override
@@ -59,6 +61,16 @@ public class OnlineDungeon extends AbstractDungeon {
 
     @Override
     public void update() {
+        super.update();
+        /*
+        CardCrawlGame.playtime += Gdx.graphics.getDeltaTime();
+        if(sceneOffsetTimer != 0.0F) {
+            sceneOffsetTimer -= Gdx.graphics.getDeltaTime();
+            if(sceneOffsetTimer < 0.0F) {
+                sceneOffsetY = 0.0F;
+                sceneOffsetTimer = 0.0F;
+            }
+        }
         //ftue.update();
 
         topPanel.update();
@@ -130,10 +142,23 @@ public class OnlineDungeon extends AbstractDungeon {
                 System.out.println("ERROR: UNKNOWN SCREEN TO UPDATE: " + screen.name());
         }
 
+        turnPhaseEffectActive = false;
+        Iterator i = topLevelEffects.iterator();
+
+        AbstractGameEffect e;
+        while(i.hasNext()) {
+            e = (AbstractGameEffect)i.next();
+            e.update();
+            if(e.isDone) {
+                i.remove();
+            }
+        }
+
 
         InputHelper.justClickedRight = false;
         InputHelper.justClickedLeft = false;
         overlayMenu.update();
+        */
     }
 
 }

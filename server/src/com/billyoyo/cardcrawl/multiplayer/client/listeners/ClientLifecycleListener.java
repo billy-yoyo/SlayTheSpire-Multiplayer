@@ -3,6 +3,7 @@ package com.billyoyo.cardcrawl.multiplayer.client.listeners;
 import com.billyoyo.cardcrawl.multiplayer.client.ClientHub;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.*;
 import com.billyoyo.cardcrawl.multiplayer.events.listeners.LifecycleEventListener;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import java.util.logging.Logger;
 
@@ -33,6 +34,8 @@ public class ClientLifecycleListener extends LifecycleEventListener {
 
         // handle "end turn" logic
 
+        AbstractDungeon.screen = AbstractDungeon.CurrentScreen.NONE;
+
         return true;
     }
 
@@ -47,6 +50,8 @@ public class ClientLifecycleListener extends LifecycleEventListener {
     @Override
     public boolean onStartTurn(StartTurnEvent event) {
         hub.setInControl(true);
+
+        // AbstractDungeon.screen = AbstractDungeon.CurrentScreen.HAND_SELECT;
 
         // handle "start turn" logic
 

@@ -16,9 +16,7 @@ public class PacketQueueStream extends Thread {
     private boolean running = true;
 
     protected void queuePacket(Packet packet) {
-        log.info("waiting to add packet to queue...");
         synchronized (queue) {
-            log.info("adding packet to queue");
             queue.add(packet);
         }
     }
@@ -28,7 +26,6 @@ public class PacketQueueStream extends Thread {
             if (queue.size() == 0) {
                 return null;
             }
-            log.info("found packet in queue");
             return queue.remove(0);
         }
     }

@@ -34,7 +34,6 @@ public class StaticRoomLauncher {
             CardCrawlGame.dungeon = new OnlineDungeon(player, hub);
             CardCrawlGame.dungeon.updateFading();
 
-
             CardCrawlGame.dungeon.nextRoomTransition();
         }
     }

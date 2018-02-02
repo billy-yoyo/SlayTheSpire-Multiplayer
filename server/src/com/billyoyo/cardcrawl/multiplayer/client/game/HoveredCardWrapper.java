@@ -108,7 +108,7 @@ public class HoveredCardWrapper extends AbstractCard {
         updatePosition();
         boolean result = wrapped.hasEnoughEnergy();
         resyncPosition();
-        return result;
+        return true;
     }
 
     @Override

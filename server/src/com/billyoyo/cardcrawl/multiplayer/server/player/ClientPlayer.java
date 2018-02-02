@@ -115,6 +115,8 @@ public class ClientPlayer extends AbstractPlayer {
             StaticGameHandler.exhaustTurn();
         }
 
+        this.draw(6);
+
         StaticGameHandler.exhaustActions();
     }
 

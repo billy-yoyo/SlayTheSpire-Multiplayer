@@ -85,6 +85,8 @@ public class ClientPlayerListener extends PlayerEventListener {
         if (AbstractDungeon.player != null) {
             ClientPlayerSnapshot snapshot = event.getSnapshot();
 
+            System.out.println("updating player stats: " + snapshot.toString());
+
             AbstractDungeon.player.currentHealth = snapshot.getHealth();
             AbstractDungeon.player.maxHealth = snapshot.getMaxHealth();
             AbstractDungeon.player.energy.energy = snapshot.getEnergy();

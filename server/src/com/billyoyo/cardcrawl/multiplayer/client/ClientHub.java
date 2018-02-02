@@ -6,6 +6,7 @@ import com.billyoyo.cardcrawl.multiplayer.client.sockets.ClientConnection;
 import com.billyoyo.cardcrawl.multiplayer.dto.CreateData;
 import com.billyoyo.cardcrawl.multiplayer.events.Event;
 import com.billyoyo.cardcrawl.multiplayer.events.EventManager;
+import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.EventId;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.EndTurnEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.GameFinishedEvent;
 import com.billyoyo.cardcrawl.multiplayer.events.eventtypes.lifecycle.PlayCardEvent;
@@ -105,7 +106,6 @@ public class ClientHub implements Hub {
 
     @Override
     public void postEvent(Event event) {
-        log.info("posting event " + event.getEventId());
         getEventManager().post(event);
     }
 
@@ -114,12 +114,13 @@ public class ClientHub implements Hub {
         // right now, if this packet fails to write, it'll be forgotten
         // this could be remedied by adding an 'onerror' callback to the packet
         // but that's enhancement territory.
+        log.info("sencing packet with id " + EventId.fromId(packet.getEventId()).name());
         server.getConnection().getOutput().write(packet);
     }
 
     @Override
     public void receivePacket(String serverId, Packet packet) {
-        log.info("received packet with id " + packet.getEventId());
+        log.info("received packet with id " + EventId.fromId(packet.getEventId()).name());
 
         CreateData data;
         if (opponent == null || AbstractDungeon.player == null) {
